@@ -2,47 +2,36 @@
 {
     class Program
     {
-        /// <summary>
-        /// The Main method serves as the entry point for the Quantity Measurement application. It prompts the user to input two values, which are then parsed as doubles. The method creates two Feet objects using the input values and compares them using the Equals method. The result of the comparison is printed to the console.
-        /// The method also includes error handling to ensure that the user inputs valid numbers, providing feedback if the input format is incorrect. Overall, this method demonstrates how to use the Feet class to compare measurements in feet and provides a simple user interface for testing the functionality of the class.
-        /// </summary>
-        /// <param name="args"></param>
-
+        // Main method to demonstrate the functionality of the Feet and Inches classes
         static void Main(string[] args)
         {
-            /// <summary>
-            /// The Main method serves as the entry point for the Quantity Measurement application.
-            /// It prompts the user to input two values, which are then parsed as doubles. The method creates two Feet objects using the input values and compares them using the Equals method. The result of the comparison is printed to the console.
-            /// The method also includes error handling to ensure that the user inputs valid numbers, providing feedback if the input format is incorrect. Overall, this method demonstrates how to use the Feet class to compare measurements in feet and provides a simple user interface for testing the functionality of the class.
-            /// </summary>
+            // Demonstrate equality of Feet objects
+            DemonstrateFeetEquality();
 
+            // Demonstrate equality of Inches objects
+            DemonstrateInchesEquality();
+        }
 
-            // Prompt the user for two values to compare
-            Console.Write("Enter 1st value: ");
-            // Validate the input to ensure it's a valid double
-            if (!double.TryParse(Console.ReadLine(), out double input1))
-            {
-                // If the input is not a valid double, display an error message and exit
-                Console.WriteLine("Invalid number format.");
-                return;
-            }
+        // Method to demonstrate the equality of two Feet objects
+        public static void DemonstrateFeetEquality()
+        {
+            // Create two Feet objects with the same value
+            Feet value1 = new Feet(1.0);
+            Feet value2 = new Feet(1.0);
 
-            Console.Write("Enter 2nd value: ");
-            // Validate the input to ensure it's a valid double
-            if (!double.TryParse(Console.ReadLine(), out double input2))
-            {
-                // If the input is not a valid double, display an error message and exit
-                Console.WriteLine("Invalid number format.");
-                return;
-            }
+            // Print the result of the equality comparison using the Equals method
+            Console.WriteLine($"Feet Equal: {value1.Equals(value2)}");
+        }
 
-            // Create Feet objects for the input values
-            Feet value1 = new Feet(input1);
-            Feet value2 = new Feet(input2);
+        // Method to demonstrate the equality of two Inches objects
+        public static void DemonstrateInchesEquality()
+        {
+            // Create two Inches objects with the same value
+            Inches value1 = new Inches(1.0);
+            Inches value2 = new Inches(1.0);
 
-            // Compare the two Feet objects using the Equals method and print the result
-            bool result = value1.Equals(value2);
-            Console.WriteLine($"Equals: {result}");
+            // Print the result of the equality comparison using the Equals method
+            Console.WriteLine($"Inches Equal: {value1.Equals(value2)}");
         }
     }
 }
