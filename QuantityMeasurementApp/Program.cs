@@ -3,30 +3,35 @@
 namespace QuantityMeasurementApp
 {
     /// <summary>
-    /// Console application demonstrating addition of QuantityLength instances across different units.
-    /// Shows how quantities in different units can be added and automatically converted.
+    /// Console application demonstrating QuantityLength addition with explicit target unit specification.
+    /// Shows cross-unit addition results in different target units.
     /// </summary>
     class Program
     {
         static void Main()
         {
-            // Add: 1 foot + 12 inches = 2 feet
-            var result1 = new QuantityLength(1.0, LengthUnit.FEET)
-                .Add(new QuantityLength(12.0, LengthUnit.INCHES));
+            // Create two quantities in different units
+            var a = new QuantityLength(1.0, LengthUnit.FEET);
+            var b = new QuantityLength(12.0, LengthUnit.INCHES);
 
-            Console.WriteLine(result1);
+            // 1 ft + 12 in = 2 ft (result in feet)
+            Console.WriteLine(a.Add(b, LengthUnit.FEET));
+            // 1 ft + 12 in = 24 in (result in inches)
+            Console.WriteLine(a.Add(b, LengthUnit.INCHES));
+            // 1 ft + 12 in ≈ 0.667 yd (result in yards)
+            Console.WriteLine(a.Add(b, LengthUnit.YARDS));
 
-            // Add: 1 yard + 3 feet = 2 yards
-            var result2 = new QuantityLength(1.0, LengthUnit.YARDS)
-                .Add(new QuantityLength(3.0, LengthUnit.FEET));
+            // 36 in + 1 yd = 6 ft (different operand order)
+            Console.WriteLine(
+                new QuantityLength(36.0, LengthUnit.INCHES)
+                    .Add(new QuantityLength(1.0, LengthUnit.YARDS), LengthUnit.FEET)
+            );
 
-            Console.WriteLine(result2);
-
-            // Add: 2.54 cm + 1 inch = 5.08 cm
-            var result3 = new QuantityLength(2.54, LengthUnit.CENTIMETERS)
-                .Add(new QuantityLength(1.0, LengthUnit.INCHES));
-
-            Console.WriteLine(result3);
+            // 2.54 cm + 1 in ≈ 5.08 cm (metric and imperial mix)
+            Console.WriteLine(
+                new QuantityLength(2.54, LengthUnit.CENTIMETERS)
+                    .Add(new QuantityLength(1.0, LengthUnit.INCHES), LengthUnit.CENTIMETERS)
+            );
         }
     }
 }

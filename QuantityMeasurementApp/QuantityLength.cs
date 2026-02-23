@@ -3,9 +3,11 @@ using System;
 namespace QuantityMeasurementApp
 {
     /// <summary>
-    /// Represents a length quantity with support for addition and conversion across multiple units.
-    /// Performs arithmetic on lengths in different units by converting to a common base (feet) and back.
+    /// Represents a length quantity with multi-unit arithmetic and conversion support.
+    /// Enables addition with explicit target unit specification and cross-unit comparisons.
     /// </summary>
+    /// <param name="value">The numeric magnitude of the length.</param>
+    /// <param name="unit">The unit of measurement (FEET, INCHES, YARDS, CENTIMETERS).</param>
     public sealed class QuantityLength
     {
         private const double EPSILON = 1e-6;
@@ -18,14 +20,15 @@ namespace QuantityMeasurementApp
         // Initialize with value and unit; validate value is finite
         public QuantityLength(double value, LengthUnit unit)
         {
+            // Check value is not NaN or Infinity
             if (!double.IsFinite(value))
-                throw new ArgumentException("Value must be finite (not NaN or Infinity).");
+                throw new ArgumentException("Value must be finite.");
 
+            Unit = unit; // enum can't be null
             Value = value;
-            Unit = unit;
         }
 
-        // Convert a value in given unit to feet (base unit)
+        // Convert a value in given unit to feet (base unit for internal calculation)
         private static double ToFeet(double value, LengthUnit unit)
         {
             return unit switch
@@ -54,7 +57,7 @@ namespace QuantityMeasurementApp
         // Convert this quantity to a different unit
         public QuantityLength ConvertTo(LengthUnit targetUnit)
         {
-            double feet = ToFeet(this.Value, this.Unit);
+            double feet = ToFeet(Value, Unit);
             double converted = FromFeet(feet, targetUnit);
             return new QuantityLength(converted, targetUnit);
         }
@@ -62,34 +65,62 @@ namespace QuantityMeasurementApp
         // Add another quantity to this one, returning result in this unit
         public QuantityLength Add(QuantityLength other)
         {
+            return Add(other, this.Unit);
+        }
+
+        // Add another quantity with explicit target unit specification
+        public QuantityLength Add(QuantityLength other, LengthUnit targetUnit)
+        {
+            // Validate second operand is not null
             if (other == null)
                 throw new ArgumentException("Second operand cannot be null.");
 
-            double thisInFeet = ToFeet(this.Value, this.Unit);
-            double otherInFeet = ToFeet(other.Value, other.Unit);
+            // Validate operand value is finite
+            if (!double.IsFinite(other.Value))
+                throw new ArgumentException("Operand value must be finite.");
 
-            double sumFeet = thisInFeet + otherInFeet;
+            // Validate target unit is defined in enum
+            if (!Enum.IsDefined(typeof(LengthUnit), targetUnit))
+                throw new ArgumentException("Invalid target unit.");
 
-            double resultValue = FromFeet(sumFeet, this.Unit);
+            // Perform addition in base unit (feet), then convert to target
+            double resultInFeet = AddInFeet(this, other);
+            double resultInTarget = FromFeet(resultInFeet, targetUnit);
 
-            return new QuantityLength(resultValue, this.Unit);
+            return new QuantityLength(resultInTarget, targetUnit);
         }
-        // Static overload for adding two quantities
-        public static QuantityLength Add(QuantityLength a, QuantityLength b)
+
+        // Static overload for consistent API with multiple entry points
+        public static QuantityLength Add(
+            QuantityLength a,
+            QuantityLength b,
+            LengthUnit targetUnit)
         {
+            // Validate both operands are not null
             if (a == null || b == null)
                 throw new ArgumentException("Operands cannot be null.");
 
-            return a.Add(b);
+            return a.Add(b, targetUnit);
         }
 
-        // Compare two quantities based on their base unit (feet) value
+        // Helper: convert two quantities to feet and sum them
+        private static double AddInFeet(QuantityLength a, QuantityLength b)
+        {
+            double aFeet = ToFeet(a.Value, a.Unit);
+            double bFeet = ToFeet(b.Value, b.Unit);
+
+            return aFeet + bFeet;
+        }
+
+        // Compare two quantities based on their base unit (feet) value with tolerance
         public override bool Equals(object obj)
         {
+            // Type check; reject non-QuantityLength objects
             if (obj is not QuantityLength other)
                 return false;
 
-            double thisFeet = ToFeet(this.Value, this.Unit);
+            // Convert both to feet, compare within tolerance
+            double thisFeet = ToFeet(Value, Unit);
             double otherFeet = ToFeet(other.Value, other.Unit);
 
             return Math.Abs(thisFeet - otherFeet) < EPSILON;
@@ -98,8 +129,8 @@ namespace QuantityMeasurementApp
         // Return hash code based on normalized base unit (feet) value
         public override int GetHashCode()
         {
-            double feet = ToFeet(Value, Unit);
-            return feet.GetHashCode();
+            // Hash based on feet to ensure equal quantities produce equal hashes
+            return ToFeet(Value, Unit).GetHashCode();
         }
 
         // Return formatted string representation
