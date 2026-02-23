@@ -13,10 +13,14 @@ Small .NET sample: length quantities with multi-unit arithmetic and conversions.
 - Run demo: `dotnet run --project QuantityMeasurementApp`
 - Run tests: `dotnet test QuantityMeasurementApp.Tests`
 
-**Implemented (UC6) — Addition of quantities**
+**Implemented (UC7) — Addition with explicit target-unit specification**
+- Files: `QuantityMeasurementApp/QuantityLength.cs`, `QuantityMeasurementApp/Program.cs`, `QuantityMeasurementApp/QuantityLengthAdditionTests.cs`
+- Adds `Add(other, targetUnit)` overload allowing callers to specify the desired result unit (e.g., `a.Add(b, LengthUnit.CENTIMETERS)`).
+- Tests: `QuantityMeasurementApp.Tests/QuantityLengthAdditionTests.cs` / `QuantityLengthExplicitTargetTests` — verifies explicit-target addition, commutativity, invalid-target handling, and scale/precision scenarios.
+
+**Implemented (UC6) — Addition of quantities (consolidated)**
 - Files: `QuantityMeasurementApp/QuantityLength.cs`, `QuantityMeasurementApp/Program.cs`
-- Adds `Add()` method for cross-unit addition (e.g., 1 ft + 12 in = 2 ft).
-- Tests: `QuantityMeasurementApp.Tests/QuantityLengthAdditionTests.cs` — same/cross-unit addition, commutativity, zero/negative/large/small values.
+- Adds `Add()` method for cross-unit addition returning result in the caller's unit; supports same/cross-unit addition and basic validations.
 
 **Implemented (UC5) — Unit-to-unit conversion API**
 - Files: `QuantityMeasurementApp/Length.cs`
