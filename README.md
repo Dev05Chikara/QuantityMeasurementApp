@@ -1,27 +1,24 @@
 # QuantityMeasurementApp
 
-A small .NET project that demonstrates a generic quantity-measurement value object with unit conversion and unit tests for equality behavior.
+Small .NET sample: a generic `Length` value object with unit conversion and compact tests.
 
-**Features**
-- `Length` generic value object supporting multiple units (Feet, Inch) with automatic unit conversion.
-- Tolerance-based equality implementation and consistent `GetHashCode()` for all units.
-- Console sample in `QuantityMeasurementApp` that compares length measurements across different units.
-- NUnit tests covering equality, null/type comparisons, unit conversion, reference equality, and hash-code consistency.
+Features
+- `Length` supports `FEET`, `INCHES`, `YARDS`, and `CENTIMETERS` with tolerance-based equality and normalized `GetHashCode()`.
+- Console demo in `Program.cs` shows cross-unit comparisons.
+- Tests in `QuantityMeasurementApp.Tests/LengthTests.cs` cover conversions and edge cases.
 
-**Getting started**
-Prerequisite: Install the .NET SDK for your platform. From the repository root you can:
+Getting started
+- Build: `dotnet build QuantityMeasurementApp`
+- Run demo: `dotnet run --project QuantityMeasurementApp`
+- Run tests: `dotnet test QuantityMeasurementApp.Tests`
 
-- Build the solution: `dotnet build QuantityMeasurementApp`
-- Run the console sample: `dotnet run --project QuantityMeasurementApp`
-- Run the tests: `dotnet test QuantityMeasurementApp.Tests`
+Implemented (UC4) — Extended units
+- Files: `QuantityMeasurementApp/Length.cs`, `QuantityMeasurementApp/LengthUnit.cs`, `QuantityMeasurementApp/Program.cs`
+- Adds `YARDS` and `CENTIMETERS` with correct conversions (e.g. 1 yd = 36 in, 1 cm ≈ 0.393701 in) while keeping the same tolerance-based equality and hash normalization.
+- Tests: `QuantityMeasurementApp.Tests/LengthTests.cs` — validates equivalence across yards, feet, inches, and centimeters.
 
-**Implemented (UC3) — Generic Length with unit conversion**
-- Classes:
-  - [QuantityMeasurementApp/Length.cs](QuantityMeasurementApp/Length.cs) — Generic length class supporting multiple units
-  - [QuantityMeasurementApp/LengthUnit.cs](QuantityMeasurementApp/LengthUnit.cs) — Enum for supported length units (Feet, Inch)
-- Behavior: Two `Length` instances are considered equal when their values differ by no more than a small tolerance (0.0001) after converting both to a common base unit (Feet). Supports direct comparison across different units (e.g., 1 Foot equals 12 Inches). `GetHashCode()` normalizes values to the tolerance so equal objects produce equal hashes.
-- Tests: See [QuantityMeasurementApp.Tests/LengthTests.cs](QuantityMeasurementApp.Tests/LengthTests.cs) — comprehensive tests verify unit conversion equality, same/different values, null comparisons, invalid unit handling, and hash-code consistency for values within tolerance.
+Implemented (UC3) — Generic Length (consolidated)
+- Files: `QuantityMeasurementApp/Length.cs`, `QuantityMeasurementApp/LengthUnit.cs`
+- Behavior: generic length class with unit conversion (e.g. 1 ft = 12 in), tolerance-based equality, and consistent `GetHashCode()`.
 
-**Previous Implementations (consolidated into UC3)**
-- UC1 — Individual `Feet` class with equality logic (now integrated into `Length` with `LengthUnit.FEET`)
-- UC2 — Individual `Inches` class with equality logic (now integrated into `Length` with `LengthUnit.INCH`)
+If you want this committed and pushed, say so and I will push the change to the current branch.
