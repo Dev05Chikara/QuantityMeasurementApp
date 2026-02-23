@@ -1,27 +1,32 @@
 # QuantityMeasurementApp
 
-Small .NET sample: a generic `Length` value object with unit conversion and compact tests.
+Small .NET sample: length quantities with multi-unit arithmetic and conversions.
 
-Features
-- `Length` supports `FEET`, `INCHES`, `YARDS`, and `CENTIMETERS` with tolerance-based equality and normalized `GetHashCode()`.
-- Console demo in `Program.cs` shows cross-unit comparisons.
-- Tests in `QuantityMeasurementApp.Tests/LengthTests.cs` cover conversions and edge cases.
+**Features**
+- `QuantityLength` supports addition across different units (FEET, INCHES, YARDS, CENTIMETERS).
+- Automatic unit conversion for arithmetic; result in first operand's unit.
+- Unit conversion API: static `Convert()` and instance `ConvertTo()` methods.
+- Tolerance-based equality and normalized `GetHashCode()`.
 
-Getting started
+**Getting started**
 - Build: `dotnet build QuantityMeasurementApp`
 - Run demo: `dotnet run --project QuantityMeasurementApp`
 - Run tests: `dotnet test QuantityMeasurementApp.Tests`
 
-Implemented (UC5) — Unit-to-unit conversion API
-- Files: `QuantityMeasurementApp/Length.cs`, `QuantityMeasurementApp/Program.cs`
-- Adds static `Length.Convert(value, source, target)` method for direct unit conversion and instance `ConvertTo(targetUnit)` method.
-- Tests: `QuantityMeasurementApp.Tests/LengthTests.cs` (`LengthConversionTests`) — comprehensive coverage of all unit conversions, round-trip precision, zero/negative/large/small values, and invalid input handling (NaN, infinity).
+**Implemented (UC6) — Addition of quantities**
+- Files: `QuantityMeasurementApp/QuantityLength.cs`, `QuantityMeasurementApp/Program.cs`
+- Adds `Add()` method for cross-unit addition (e.g., 1 ft + 12 in = 2 ft).
+- Tests: `QuantityMeasurementApp.Tests/QuantityLengthAdditionTests.cs` — same/cross-unit addition, commutativity, zero/negative/large/small values.
 
-Implemented (UC4) — Extended units
-- Files: `QuantityMeasurementApp/Length.cs`, `QuantityMeasurementApp/LengthUnit.cs`, `QuantityMeasurementApp/Program.cs`
-- Adds `YARDS` and `CENTIMETERS` with correct conversions (e.g. 1 yd = 36 in, 1 cm ≈ 0.393701 in) while keeping the same tolerance-based equality and hash normalization.
-- Tests: `QuantityMeasurementApp.Tests/LengthTests.cs` — validates equivalence across yards, feet, inches, and centimeters.
+**Implemented (UC5) — Unit-to-unit conversion API**
+- Files: `QuantityMeasurementApp/Length.cs`
+- Static `Length.Convert(value, source, target)` and instance `ConvertTo(targetUnit)` methods.
+- Tests: `QuantityMeasurementApp.Tests/LengthTests.cs` (`LengthConversionTests`) — conversion accuracy, round-trip, edge cases.
 
-Implemented (UC3) — Generic Length (consolidated)
+**Implemented (UC4) — Extended units**
 - Files: `QuantityMeasurementApp/Length.cs`, `QuantityMeasurementApp/LengthUnit.cs`
-- Behavior: generic length class with unit conversion (e.g. 1 ft = 12 in), tolerance-based equality, and consistent `GetHashCode()`.
+- Added YARDS and CENTIMETERS with correct conversion factors.
+
+**Implemented (UC3) — Generic Length**
+- Files: `QuantityMeasurementApp/Length.cs`, `QuantityMeasurementApp/LengthUnit.cs`
+- Generic length class with unit conversion and tolerance-based equality.
