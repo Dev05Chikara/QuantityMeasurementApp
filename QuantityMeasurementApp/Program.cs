@@ -3,52 +3,30 @@
 namespace QuantityMeasurementApp
 {
     /// <summary>
-    /// Console application demonstrating length conversion and equality using the Length class.
+    /// Console application demonstrating addition of QuantityLength instances across different units.
+    /// Shows how quantities in different units can be added and automatically converted.
     /// </summary>
-    public class Program
+    class Program
     {
-        // Convert a value between two units using static API
-        public static double DemonstrateLengthConversion(
-            double value,
-            LengthUnit from,
-            LengthUnit to)
-        {
-            return Length.Convert(value, from, to);
-        }
-
-        // Convert a Length instance to a different unit
-        public static Length DemonstrateLengthConversion(
-            Length length,
-            LengthUnit toUnit)
-        {
-            return length.ConvertTo(toUnit);
-        }
-
-        // Check if two Length instances are equal within tolerance
-        public static bool DemonstrateLengthEquality(
-            Length l1,
-            Length l2)
-        {
-            return l1.Equals(l2);
-        }
-
         static void Main()
         {
-            // Convert 1 foot to inches
-            Console.WriteLine(
-                DemonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCHES)
-            ); 
+            // Add: 1 foot + 12 inches = 2 feet
+            var result1 = new QuantityLength(1.0, LengthUnit.FEET)
+                .Add(new QuantityLength(12.0, LengthUnit.INCHES));
 
-            // Convert 3 yards to feet
-            Console.WriteLine(
-                DemonstrateLengthConversion(3.0, LengthUnit.YARDS, LengthUnit.FEET)
-            ); 
+            Console.WriteLine(result1);
 
-            // Create a yard and convert to inches
-            var yard = new Length(1, LengthUnit.YARDS);
-            var inInches = DemonstrateLengthConversion(yard, LengthUnit.INCHES);
+            // Add: 1 yard + 3 feet = 2 yards
+            var result2 = new QuantityLength(1.0, LengthUnit.YARDS)
+                .Add(new QuantityLength(3.0, LengthUnit.FEET));
 
-            Console.WriteLine(inInches);
+            Console.WriteLine(result2);
+
+            // Add: 2.54 cm + 1 inch = 5.08 cm
+            var result3 = new QuantityLength(2.54, LengthUnit.CENTIMETERS)
+                .Add(new QuantityLength(1.0, LengthUnit.INCHES));
+
+            Console.WriteLine(result3);
         }
     }
 }
