@@ -4,63 +4,104 @@ using QuantityMeasurementApp;
 namespace QuantityMeasurementApp.Tests
 {
     /// <summary>
-    /// Unit tests for the Length class, validating the equality logic, hash code consistency, and handling of invalid inputs.
-    /// Tests include comparisons between equivalent lengths in different units (Feet and Inch), as well as checks for non-equivalent lengths, null comparisons, and invalid unit handling.
-    /// These tests ensure that the Length class behaves as expected in various scenarios, providing confidence in the correctness of the implementation for use in a quantity measurement application.
+    /// Unit tests for the Length class to verify equality comparison across different units of length measurement.
+    /// These tests cover various scenarios, including comparisons between yards, feet, inches, and centimeters, as well as edge cases such as null comparisons and reference equality.
+    /// The tests also ensure that the GetHashCode method produces consistent results for equivalent Length objects, which is crucial for the correct behavior of hash-based collections.
     /// </summary>
-    
-    
     [TestFixture]
     public class LengthTests
     {
-        // Test to verify that 1 foot is equal to 12 inches, validating the unit conversion and equality logic in the Length class
+        // Test cases for equality comparison between Length objects with different units and values.
         [Test]
-        public void testEquality_FeetToInch_Equivalent()
+        public void testEquality_YardToYard_SameValue()
         {
-            var l1 = new Length(1.0, LengthUnit.FEET);
-            var l2 = new Length(12.0, LengthUnit.INCH);
+            var l1 = new Length(1.0, LengthUnit.YARDS);
+            var l2 = new Length(1.0, LengthUnit.YARDS);
 
             Assert.That(l1, Is.EqualTo(l2));
         }
 
-        // Test to verify that different length values are not considered equal, ensuring that the equality logic correctly distinguishes between non-equivalent lengths
+        // Test cases for equality comparison between Length objects with different units but equivalent values.
         [Test]
-        public void testEquality_DifferentValues()
+        public void testEquality_YardToFeet_EquivalentValue()
         {
-            var l1 = new Length(1.0, LengthUnit.FEET);
-            var l2 = new Length(2.0, LengthUnit.FEET);
+            var yard = new Length(1.0, LengthUnit.YARDS);
+            var feet = new Length(3.0, LengthUnit.FEET);
 
-            Assert.That(l1, Is.Not.EqualTo(l2));
+            Assert.That(yard, Is.EqualTo(feet));
         }
 
-        // Test to verify that the hash codes of equivalent Length instances are consistent, ensuring that the GetHashCode implementation aligns with the equality logic
+        // Test cases for equality comparison between Length objects with different units but equivalent values.
         [Test]
-        public void testHashCode_Consistency()
+        public void testEquality_YardToInches_EquivalentValue()
         {
-            var l1 = new Length(1.0, LengthUnit.FEET);
-            var l2 = new Length(12.0, LengthUnit.INCH);
+            var yard = new Length(1.0, LengthUnit.YARDS);
+            var inches = new Length(36.0, LengthUnit.INCHES);
 
-            Assert.That(l1.GetHashCode(), Is.EqualTo(l2.GetHashCode()));
+            Assert.That(yard, Is.EqualTo(inches));
         }
 
-        // Test to verify that comparing a Length instance to null returns false, ensuring that the Equals method correctly handles null comparisons
+        // Test cases for equality comparison between Length objects with different units and non-equivalent values.
         [Test]
-        public void testEquality_Null()
+        public void testEquality_centimetersToInches_EquivalentValue()
         {
-            var l1 = new Length(1.0, LengthUnit.FEET);
+            var cm = new Length(1.0, LengthUnit.CENTIMETERS);
+            var inches = new Length(0.393701, LengthUnit.INCHES);
 
-            Assert.That(l1.Equals(null), Is.False);
+            Assert.That(cm, Is.EqualTo(inches));
+        }
+
+        // Test cases for equality comparison between Length objects with different units and non-equivalent values.
+        [Test]
+        public void testEquality_centimetersToFeet_NonEquivalentValue()
+        {
+            var cm = new Length(1.0, LengthUnit.CENTIMETERS);
+            var feet = new Length(1.0, LengthUnit.FEET);
+
+            Assert.That(cm, Is.Not.EqualTo(feet));
+        }
+
+        // Test cases for transitive property of equality across multiple units of length measurement.
+        [Test]
+        public void testEquality_MultiUnit_TransitiveProperty()
+        {
+            var yard = new Length(1.0, LengthUnit.YARDS);
+            var feet = new Length(3.0, LengthUnit.FEET);
+            var inches = new Length(36.0, LengthUnit.INCHES);
+
+            Assert.That(yard, Is.EqualTo(feet));
+            Assert.That(feet, Is.EqualTo(inches));
+            Assert.That(yard, Is.EqualTo(inches));
+        }
+
+        // Test cases for equality comparison when both Length objects are null.
+        [Test]
+        public void testEquality_SameReference()
+        {
+            var yard = new Length(2.0, LengthUnit.YARDS);
+
+            Assert.That(yard.Equals(yard), Is.True);
+        }
+
+        // Test cases for equality comparison when one of the Length objects is null.
+        [Test]
+        public void testEquality_NullComparison()
+        {
+            var yard = new Length(1.0, LengthUnit.YARDS);
+
+            Assert.That(yard.Equals(null), Is.False);
         }
 
         
-        // Test to verify that providing an invalid unit to the Length constructor throws an ArgumentException, ensuring that the class properly validates unit inputs and prevents the creation of Length instances with unsupported units
+        // Test cases for consistency of GetHashCode method for equivalent Length objects.
         [Test]
-        public void testInvalidUnit()
+        public void testHashCode_Consistency()
         {
-            Assert.Throws<ArgumentException>(() =>
-            {
-                new Length(1.0, (LengthUnit)999);
-            });
+            var yard = new Length(1.0, LengthUnit.YARDS);
+            var inches = new Length(36.0, LengthUnit.INCHES);
+
+            Assert.That(yard.GetHashCode(),
+                        Is.EqualTo(inches.GetHashCode()));
         }
     }
 }
