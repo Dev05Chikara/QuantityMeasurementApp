@@ -18,5 +18,3 @@ Prerequisite: Install the .NET SDK for your platform. From the repository root y
 - Class: [QuantityMeasurementApp/Feet.cs](QuantityMeasurementApp/Feet.cs#L1-L200)
 - Behavior: Two `Feet` instances are considered equal when their values differ by no more than a small tolerance (0.0001). `GetHashCode()` normalizes values to the tolerance so equal objects produce equal hashes.
 - Tests: See [QuantityMeasurementApp.Tests/FeetTests.cs](QuantityMeasurementApp.Tests/FeetTests.cs#L1-L200) — tests verify same/different values, null and type mismatches, reference equality, and hash-code consistency for values within tolerance.
-
-If you want, I can add a short example in the README showing sample console input/output or expand the project to support additional units (inches, yards, meters) with conversion utilities.
