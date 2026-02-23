@@ -1,18 +1,39 @@
 namespace QuantityMeasurementApp
 {
     /// <summary>
-    /// Defines the units of length measurement supported by the Length class.
-    /// This enum includes INCHES, FEET, YARDS, and CENTIMETERS. Each unit can be converted to a common base unit (inches) for comparison purposes in the Length class.
+    /// Enumeration of supported length units for measurement conversion.
     /// </summary>
-    /// <param name="INCHES">Represents inches as a unit of length measurement.</param>
-    /// <param name="FEET">Represents feet as a unit of length measurement.</param>
-    /// <param name="YARDS">Represents yards as a unit of length measurement.</param>   
-    /// <param name="CENTIMETERS">Represents centimeters as a unit of length measurement.</param>
     public enum LengthUnit
     {
+        // Base unit; conversion factor = 1.0
         INCHES,
+        // 12 inches
         FEET,
+        // 36 inches
         YARDS,
+        // Metric unit; approximately 0.393701 inches
         CENTIMETERS
+    }
+
+    /// <summary>
+    /// Extension methods for LengthUnit to support unit conversion.
+    /// </summary>
+    public static class LengthUnitExtensions
+    {
+        /// <summary>
+        /// Get the conversion factor relative to the base unit (inches).
+        /// </summary>
+        public static double GetFactor(this LengthUnit unit)
+        {
+            // Return factor to convert unit to inches
+            return unit switch
+            {
+                LengthUnit.INCHES => 1.0,
+                LengthUnit.FEET => 12.0,
+                LengthUnit.YARDS => 36.0,
+                LengthUnit.CENTIMETERS => 0.393701,
+                _ => throw new ArgumentException("Unsupported LengthUnit")
+            };
+        }
     }
 }

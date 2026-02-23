@@ -3,69 +3,86 @@ using System;
 namespace QuantityMeasurementApp
 {
     /// <summary>
-    /// Represents a length measurement with a specific unit. Supports equality comparison across different units by converting to a common base unit (inches) for comparison.
-    /// The class implements IEquatable<Length> to provide a type-specific equality method, and overrides Equals and GetHashCode to ensure consistent behavior in collections and when comparing objects.
-    /// The equality comparison uses a tolerance to account for floating-point precision issues when converting between units. The GetHashCode method normalizes the value to the base unit and rounds it to ensure that equivalent lengths produce the same hash code, which is important for the correct behavior of hash-based collections.
+    /// Represents a length measurement with unit conversion and tolerance-based equality.
+    /// Supports multiple units (FEET, INCHES, YARDS, CENTIMETERS) with automatic conversion.
     /// </summary>
-    /// <param name="value">The numeric value of the length measurement.</param>
-    /// <param name="unit">The unit of the length measurement, defined by the LengthUnit enum.</param>
-    public class Length : IEquatable<Length>
+    public sealed class Length : IEquatable<Length>
     {
-        // The numeric value of the length measurement.
+        // Numeric value of the measurement
         private readonly double value;
+        // Unit of measurement (FEET, INCHES, YARDS, CENTIMETERS)
         private readonly LengthUnit unit;
-
-        // Tolerance for comparing lengths, to account for floating-point precision issues when converting between units.
+        // Tolerance for floating-point comparisons
         private const double TOLERANCE = 0.0001;
 
+        // Initialize with a value and unit; validate value is finite
         public Length(double value, LengthUnit unit)
         {
-            this.value = value;
+            if (!double.IsFinite(value)) throw new ArgumentException("Value must be finite");
+
             this.unit = unit;
+            this.value = value;
         }
 
-        // Converts the length measurement to a common base unit (inches) for comparison. This method uses a switch expression to determine the conversion factor based on the unit of the length measurement.
-        private double ConvertToBaseUnit()
+        // Get the numeric value
+        public double Value => value;
+        // Get the unit of measurement
+        public LengthUnit Unit => unit;
+
+        // Convert a value from one unit to another
+        public static double Convert(double value, LengthUnit source, LengthUnit target)
         {
-            return unit switch
-            {
-                LengthUnit.INCHES => value,
-                LengthUnit.FEET => value * 12.0,
-                LengthUnit.YARDS => value * 36.0,
-                LengthUnit.CENTIMETERS => value * 0.393701,
-                _ => throw new InvalidOperationException("Unsupported unit")
-            };
+            if (!double.IsFinite(value))
+                throw new ArgumentException("Value must be finite");
+
+            // Normalize source to base unit (inches), then convert to target
+            double baseValue = value * source.GetFactor();
+            double result = baseValue / target.GetFactor();
+
+            return result;
         }
 
-        //Equals method for IEquatable<Length> interface
-        //This method checks if the other Length object is null and then compares the two Length objects by converting them to the base unit (inches) and checking if the absolute difference is within the defined tolerance.
+        // Return a new Length instance converted to the target unit
+        public Length ConvertTo(LengthUnit targetUnit)
+        {
+            double converted = Convert(this.value, this.unit, targetUnit);
+            return new Length(converted, targetUnit);
+        }
+
+        // Convert this length to base unit (inches) for comparison
+        private double ToBaseUnit()
+        {
+            return value * unit.GetFactor();
+        }
+
+        // Compare two Length instances; equal if base unit difference is within tolerance
         public bool Equals(Length other)
         {
             if (other is null) return false;
 
-            return Math.Abs(
-                this.ConvertToBaseUnit() - 
-                other.ConvertToBaseUnit()
-            ) <= TOLERANCE;
+            return Math.Abs(this.ToBaseUnit() - other.ToBaseUnit())
+                   <= TOLERANCE;
         }
 
-        // Overrides the default Equals method to provide a consistent equality comparison for Length objects.
-        // It first checks if the reference of the current object and the object being compared are the same, in which case it returns true.
-        // If not, it attempts to cast the object to a Length type and calls the type-specific Equals method.
+        // Override object.Equals; cast and delegate to IEquatable implementation
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(this, obj)) return true;
             return Equals(obj as Length);
         }
 
-        //Overrides GetHashCode to ensure that equivalent Length objects produce the same hash code,
-        //which is important for the correct behavior of hash-based collections.
+        // Compute hash code of normalized base unit for consistency with equality
         public override int GetHashCode()
         {
             double normalized =
-                Math.Round(ConvertToBaseUnit() / TOLERANCE) * TOLERANCE;
+                Math.Round(ToBaseUnit() / TOLERANCE) * TOLERANCE;
 
             return normalized.GetHashCode();
+        }
+
+        // Return formatted string representation: value and unit
+        public override string ToString()
+        {
+            return $"{value:F2} {unit}";
         }
     }
 }
