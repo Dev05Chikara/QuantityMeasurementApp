@@ -1,11 +1,12 @@
 # QuantityMeasurementApp
 
-A small .NET project that demonstrates a quantity-measurement value object and unit tests for equality behavior.
+A small .NET project that demonstrates a generic quantity-measurement value object with unit conversion and unit tests for equality behavior.
 
 **Features**
-- `Feet` value object with a tolerance-based equality implementation and consistent `GetHashCode()`.
-- Console sample in `QuantityMeasurementApp` that compares two `Feet` instances.
-- NUnit tests covering equality, null/type comparisons, reference equality, and hash-code consistency.
+- `Length` generic value object supporting multiple units (Feet, Inch) with automatic unit conversion.
+- Tolerance-based equality implementation and consistent `GetHashCode()` for all units.
+- Console sample in `QuantityMeasurementApp` that compares length measurements across different units.
+- NUnit tests covering equality, null/type comparisons, unit conversion, reference equality, and hash-code consistency.
 
 **Getting started**
 Prerequisite: Install the .NET SDK for your platform. From the repository root you can:
@@ -14,12 +15,13 @@ Prerequisite: Install the .NET SDK for your platform. From the repository root y
 - Run the console sample: `dotnet run --project QuantityMeasurementApp`
 - Run the tests: `dotnet test QuantityMeasurementApp.Tests`
 
-**Implemented (UC1) — Feet equality**
-- Class: [QuantityMeasurementApp/Feet.cs](QuantityMeasurementApp/Feet.cs#L1-L200)
-- Behavior: Two `Feet` instances are considered equal when their values differ by no more than a small tolerance (0.0001). `GetHashCode()` normalizes values to the tolerance so equal objects produce equal hashes.
-- Tests: See [QuantityMeasurementApp.Tests/FeetTests.cs](QuantityMeasurementApp.Tests/FeetTests.cs#L1-L200) — tests verify same/different values, null and type mismatches, reference equality, and hash-code consistency for values within tolerance.
+**Implemented (UC3) — Generic Length with unit conversion**
+- Classes:
+  - [QuantityMeasurementApp/Length.cs](QuantityMeasurementApp/Length.cs) — Generic length class supporting multiple units
+  - [QuantityMeasurementApp/LengthUnit.cs](QuantityMeasurementApp/LengthUnit.cs) — Enum for supported length units (Feet, Inch)
+- Behavior: Two `Length` instances are considered equal when their values differ by no more than a small tolerance (0.0001) after converting both to a common base unit (Feet). Supports direct comparison across different units (e.g., 1 Foot equals 12 Inches). `GetHashCode()` normalizes values to the tolerance so equal objects produce equal hashes.
+- Tests: See [QuantityMeasurementApp.Tests/LengthTests.cs](QuantityMeasurementApp.Tests/LengthTests.cs) — comprehensive tests verify unit conversion equality, same/different values, null comparisons, invalid unit handling, and hash-code consistency for values within tolerance.
 
-**Implemented (UC2) — Inches equality**
-- Class: [QuantityMeasurementApp/Inches.cs](QuantityMeasurementApp/Inches.cs)
-- Behavior: Two `Inches` instances are considered equal when their values differ by no more than a small tolerance (0.0001). `GetHashCode()` normalizes values to the tolerance so equal objects produce equal hashes.
-- Tests: See [QuantityMeasurementApp.Tests/InchesTests.cs](QuantityMeasurementApp.Tests/InchesTests.cs) — tests verify same/different values, null and type mismatches, reference equality, and hash-code consistency for values within tolerance.
+**Previous Implementations (consolidated into UC3)**
+- UC1 — Individual `Feet` class with equality logic (now integrated into `Length` with `LengthUnit.FEET`)
+- UC2 — Individual `Inches` class with equality logic (now integrated into `Length` with `LengthUnit.INCH`)
