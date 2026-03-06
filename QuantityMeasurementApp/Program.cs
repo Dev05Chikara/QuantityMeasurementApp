@@ -3,35 +3,28 @@
 namespace QuantityMeasurementApp
 {
     /// <summary>
-    /// Console application demonstrating QuantityLength addition with explicit target unit specification.
-    /// Shows cross-unit addition results in different target units.
+    /// Entry point for the Quantity Measurement application.
+    /// Demonstrates basic usage of QuantityLength and LengthUnit.
+    /// This class is kept minimal as the main focus is on the QuantityLength implementation and its tests.
     /// </summary>
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
-            // Create two quantities in different units
-            var a = new QuantityLength(1.0, LengthUnit.FEET);
-            var b = new QuantityLength(12.0, LengthUnit.INCHES);
+            // Sample usage of QuantityLength and LengthUnit
+            var length1 = new QuantityLength(1.0, LengthUnit.FEET);
+            var length2 = new QuantityLength(12.0, LengthUnit.INCHES);
 
-            // 1 ft + 12 in = 2 ft (result in feet)
-            Console.WriteLine(a.Add(b, LengthUnit.FEET));
-            // 1 ft + 12 in = 24 in (result in inches)
-            Console.WriteLine(a.Add(b, LengthUnit.INCHES));
-            // 1 ft + 12 in ≈ 0.667 yd (result in yards)
-            Console.WriteLine(a.Add(b, LengthUnit.YARDS));
+            Console.WriteLine("Equality Test:");
+            Console.WriteLine(length1.Equals(length2)); // true
 
-            // 36 in + 1 yd = 6 ft (different operand order)
-            Console.WriteLine(
-                new QuantityLength(36.0, LengthUnit.INCHES)
-                    .Add(new QuantityLength(1.0, LengthUnit.YARDS), LengthUnit.FEET)
-            );
+            Console.WriteLine("\nConversion Test:");
+            var converted = length1.ConvertTo(LengthUnit.INCHES);
+            Console.WriteLine($"{converted.Value} {converted.Unit}");
 
-            // 2.54 cm + 1 in ≈ 5.08 cm (metric and imperial mix)
-            Console.WriteLine(
-                new QuantityLength(2.54, LengthUnit.CENTIMETERS)
-                    .Add(new QuantityLength(1.0, LengthUnit.INCHES), LengthUnit.CENTIMETERS)
-            );
+            Console.WriteLine("\nAddition Test:");
+            var sum = length1.Add(length2, LengthUnit.FEET);
+            Console.WriteLine($"{sum.Value} {sum.Unit}");
         }
     }
 }
