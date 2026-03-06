@@ -13,6 +13,11 @@ Small .NET sample: length quantities with multi-unit arithmetic and conversions.
 - Run demo: `dotnet run --project QuantityMeasurementApp`
 - Run tests: `dotnet test QuantityMeasurementApp.Tests`
 
+**Implemented (UC8) — Refactor QuantityLength for cleaner responsibilities**
+- Files: `QuantityMeasurementApp/QuantityLength.cs`, `QuantityMeasurementApp/Program.cs`, `QuantityMeasurementApp.Tests/QuantityLengthAdditionTests.cs`
+- Simplifies `QuantityLength` by delegating all unit conversions to `LengthUnit` and consolidating equality, conversion, and addition logic.
+- Updated tests (`QuantityLengthRefactoredTests`) ensure correct behavior after refactor: equality across units, `ConvertTo`, and `Add` with explicit target unit.
+
 **Implemented (UC7) — Addition with explicit target-unit specification**
 - Files: `QuantityMeasurementApp/QuantityLength.cs`, `QuantityMeasurementApp/Program.cs`, `QuantityMeasurementApp/QuantityLengthAdditionTests.cs`
 - Adds `Add(other, targetUnit)` overload allowing callers to specify the desired result unit (e.g., `a.Add(b, LengthUnit.CENTIMETERS)`).
