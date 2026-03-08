@@ -5,7 +5,7 @@ namespace QuantityMeasurementApp
 {
     /// <summary>
     /// Entry point demonstrating generic quantity functionality across multiple measurement categories.
-    /// Demonstrates UC1–UC10 functionality using unified, reusable methods.
+    /// Demonstrates UC1–UC11 functionality using unified, reusable methods.
     /// </summary>
     class Program
     {
@@ -16,6 +16,9 @@ namespace QuantityMeasurementApp
 
             Console.WriteLine("\n=== Weight Quantity Operations (UC9) ===\n");
             DemonstrateWeightOperations();
+
+            Console.WriteLine("\n=== Volume Quantity Operations (UC11) ===\n");
+            DemonstrateVolumeOperations();
 
             Console.WriteLine("\n=== Cross-Category Prevention (UC10) ===\n");
             DemonstrateCrossCategoryPrevention();
@@ -62,6 +65,28 @@ namespace QuantityMeasurementApp
 
             // Addition across units
             DemonstrateAddition(kilograms, grams, WeightUnit.KILOGRAM, "1 KILOGRAM + 1000 GRAMS → KILOGRAM");
+        }
+
+        /// <summary>
+        /// Demonstrates volume quantity operations using generic Quantity<VolumeUnit>.
+        /// Shows seamless integration of new measurement category (UC11).
+        /// </summary>
+        static void DemonstrateVolumeOperations()
+        {
+            // Equality across volume units
+            var litres = new Quantity<VolumeUnit>(1, VolumeUnit.LITRE);
+            var millilitres = new Quantity<VolumeUnit>(1000, VolumeUnit.MILLILITRE);
+            DemonstrateEquality(litres, millilitres, "1 LITRE vs 1000 MILLILITRES");
+
+            // Unit conversion
+            DemonstrateConversion(litres, VolumeUnit.MILLILITRE, "1 LITRE to MILLILITRES");
+
+            // Addition across units
+            DemonstrateAddition(litres, millilitres, VolumeUnit.LITRE, "1 LITRE + 1000 MILLILITRES → LITRE");
+
+            // Additional conversions
+            var gallons = new Quantity<VolumeUnit>(1, VolumeUnit.GALLON);
+            DemonstrateConversion(gallons, VolumeUnit.LITRE, "1 GALLON to LITRES");
         }
 
         /// <summary>
