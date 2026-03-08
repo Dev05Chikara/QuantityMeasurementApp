@@ -11,6 +11,16 @@ namespace QuantityMeasurementApp.Quantities
     public class Quantity<U> where U : Enum
     {
         /// <summary>
+        /// Arithmetic operation types for centralized logic
+        /// </summary>
+        private enum ArithmeticOperation
+        {
+            ADD,
+            SUBTRACT,
+            DIVIDE
+        }
+
+        /// <summary>
         /// Quantity value
         /// </summary>
         public double Value { get; }
@@ -91,6 +101,58 @@ namespace QuantityMeasurementApp.Quantities
         }
 
         /// <summary>
+        /// Centralized validation for arithmetic operands.
+        /// Validates null values, category compatibility, and numeric finiteness.
+        /// </summary>
+        /// <param name="other">Other quantity operand</param>
+        /// <param name="targetUnit">Target unit (required for add/subtract, null for divide)</param>
+        /// <param name="targetUnitRequired">Whether target unit validation is required</param>
+        /// <exception cref="ArgumentException">Thrown when validation fails</exception>
+        private void ValidateArithmeticOperands(Quantity<U> other, U? targetUnit, bool targetUnitRequired)
+        {
+            if (other == null)
+                throw new ArgumentException("Cannot perform arithmetic with null quantity");
+
+            if (targetUnitRequired && targetUnit == null)
+                throw new ArgumentException("Target unit cannot be null");
+
+            // Cross-category protection
+            if (Unit.GetType() != other.Unit.GetType())
+                throw new ArgumentException("Cannot perform arithmetic on quantities of different measurement categories");
+
+            // Finiteness validation
+            if (double.IsNaN(Value) || double.IsInfinity(Value))
+                throw new ArgumentException("Invalid quantity value (NaN or infinite)");
+
+            if (double.IsNaN(other.Value) || double.IsInfinity(other.Value))
+                throw new ArgumentException("Invalid quantity value (NaN or infinite)");
+        }
+
+        /// <summary>
+        /// Performs base-unit arithmetic operation after validation.
+        /// Centralizes conversion and computation logic for all arithmetic operations.
+        /// </summary>
+        /// <param name="other">Other quantity operand</param>
+        /// <param name="operation">Arithmetic operation to perform</param>
+        /// <returns>Result in base units</returns>
+        /// <exception cref="ArithmeticException">Thrown for division by zero</exception>
+        private double PerformBaseArithmetic(Quantity<U> other, ArithmeticOperation operation)
+        {
+            double base1 = ConvertToBase(Unit, Value);
+            double base2 = ConvertToBase(other.Unit, other.Value);
+
+            return operation switch
+            {
+                ArithmeticOperation.ADD => base1 + base2,
+                ArithmeticOperation.SUBTRACT => base1 - base2,
+                ArithmeticOperation.DIVIDE => base2 == 0.0
+                    ? throw new ArithmeticException("Cannot divide by zero quantity")
+                    : base1 / base2,
+                _ => throw new ArgumentException("Unsupported arithmetic operation")
+            };
+        }
+
+        /// <summary>
         /// Adds two quantities in the first operand's unit.
         /// </summary>
         /// <param name="other">Quantity to add</param>
@@ -108,13 +170,11 @@ namespace QuantityMeasurementApp.Quantities
         /// <returns>New quantity with sum in target unit</returns>
         public Quantity<U> Add(Quantity<U> other, U targetUnit)
         {
-            double base1 = ConvertToBase(Unit, Value);
-            double base2 = ConvertToBase(other.Unit, other.Value);
+            ValidateArithmeticOperands(other, targetUnit, true);
+            double result = PerformBaseArithmetic(other, ArithmeticOperation.ADD);
+            double convertedResult = ConvertFromBase(targetUnit, result);
 
-            double sum = base1 + base2;
-            double result = ConvertFromBase(targetUnit, sum);
-
-            return new Quantity<U>(Math.Round(result, 2), targetUnit);
+            return new Quantity<U>(Math.Round(convertedResult, 2), targetUnit);
         }
 
         /// <summary>
@@ -137,23 +197,11 @@ namespace QuantityMeasurementApp.Quantities
         /// <exception cref="ArgumentException">Thrown when other is null, targetUnit is null, or from different category</exception>
         public Quantity<U> Subtract(Quantity<U> other, U targetUnit)
         {
-            if (other == null)
-                throw new ArgumentException("Cannot subtract null quantity");
+            ValidateArithmeticOperands(other, targetUnit, true);
+            double result = PerformBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+            double convertedResult = ConvertFromBase(targetUnit, result);
 
-            if (targetUnit == null)
-                throw new ArgumentException("Target unit cannot be null");
-
-            // Cross-category protection
-            if (Unit.GetType() != other.Unit.GetType())
-                throw new ArgumentException("Cannot subtract quantities of different measurement categories");
-
-            double base1 = ConvertToBase(Unit, Value);
-            double base2 = ConvertToBase(other.Unit, other.Value);
-
-            double difference = base1 - base2;
-            double result = ConvertFromBase(targetUnit, difference);
-
-            return new Quantity<U>(Math.Round(result, 2), targetUnit);
+            return new Quantity<U>(Math.Round(convertedResult, 2), targetUnit);
         }
 
         /// <summary>
@@ -165,20 +213,8 @@ namespace QuantityMeasurementApp.Quantities
         /// <exception cref="ArithmeticException">Thrown when dividing by zero quantity</exception>
         public double Divide(Quantity<U> other)
         {
-            if (other == null)
-                throw new ArgumentException("Cannot divide by null quantity");
-
-            // Cross-category protection
-            if (Unit.GetType() != other.Unit.GetType())
-                throw new ArgumentException("Cannot divide quantities of different measurement categories");
-
-            double base1 = ConvertToBase(Unit, Value);
-            double base2 = ConvertToBase(other.Unit, other.Value);
-
-            if (base2 == 0.0)
-                throw new ArithmeticException("Cannot divide by zero quantity");
-
-            return base1 / base2;
+            ValidateArithmeticOperands(other, default, false);
+            return PerformBaseArithmetic(other, ArithmeticOperation.DIVIDE);
         }
 
         /// <summary>

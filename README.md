@@ -8,6 +8,7 @@ Small .NET sample: length, weight, and volume quantities with multi-unit arithme
 - `Quantity<VolumeUnit>` supports addition, subtraction, and division across different units (LITRE, MILLILITRE, GALLON).
 - Generic `Quantity<U>` class for any measurement category implementing `IMeasurable`.
 - Comprehensive arithmetic operations: addition (UC6-UC7), subtraction (UC12), division (UC12).
+- Centralized arithmetic logic (UC13) enforcing DRY principle with unified validation and conversion.
 - Automatic unit conversion for arithmetic; result in first operand's unit (or explicitly specified target unit).
 - Unit conversion API: static `Convert()` and instance `ConvertTo()` methods.
 - Tolerance-based equality and normalized `GetHashCode()`.
@@ -85,3 +86,17 @@ Small .NET sample: length, weight, and volume quantities with multi-unit arithme
 - Demonstrates non-commutative properties: A - B ≠ B - A, A ÷ B ≠ B ÷ A.
 - Includes comprehensive unit tests (50+ test cases) covering same-unit, cross-unit, negative results, zero results, explicit target units, and edge cases.
 - Demonstrates subtraction and division across all measurement categories (length, weight, volume).
+
+**Implemented (UC13) — Centralized Arithmetic Logic to Enforce DRY in Quantity Operations**
+- Files: `QuantityMeasurementApp/Quantities/Quantity.cs`
+- Refactors arithmetic operations (addition, subtraction, division) to eliminate code duplication and enforce DRY principle.
+- Introduces `ArithmeticOperation` enum for type-safe operation dispatch.
+- Creates centralized `ValidateArithmeticOperands()` helper method for consistent validation across all operations.
+- Creates centralized `PerformBaseArithmetic()` helper method for unified conversion and computation logic.
+- Eliminates repetitive validation, conversion, and error handling code from individual arithmetic methods.
+- Maintains identical public API and behavior from UC12; all existing tests pass without modification.
+- Improves maintainability: validation and conversion changes affect all operations uniformly.
+- Enables future extensibility: adding new operations (multiplication, modulo) requires minimal code changes.
+- Demonstrates clean separation of concerns: public methods handle API consistency, private helpers handle implementation details.
+- Validates consistent error handling: same exceptions and messages across all operations.
+- Preserves immutability, rounding behavior, and mathematical properties from UC12.
