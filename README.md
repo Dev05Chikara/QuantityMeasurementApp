@@ -3,14 +3,16 @@
 Small .NET sample: length, weight, and volume quantities with multi-unit arithmetic and conversions, now supporting extensible measurement categories via generics.
 
 **Features**
-- `Quantity<LengthUnit>` supports addition across different units (FEET, INCHES, YARDS, CENTIMETERS).
-- `Quantity<WeightUnit>` supports addition across different units (KILOGRAMS, GRAMS, POUNDS).
-- `Quantity<VolumeUnit>` supports addition across different units (LITRE, MILLILITRE, GALLON).
+- `Quantity<LengthUnit>` supports addition, subtraction, and division across different units (FEET, INCHES, YARDS, CENTIMETERS).
+- `Quantity<WeightUnit>` supports addition, subtraction, and division across different units (KILOGRAMS, GRAMS, POUNDS).
+- `Quantity<VolumeUnit>` supports addition, subtraction, and division across different units (LITRE, MILLILITRE, GALLON).
 - Generic `Quantity<U>` class for any measurement category implementing `IMeasurable`.
-- Automatic unit conversion for arithmetic; result in first operand's unit.
+- Comprehensive arithmetic operations: addition (UC6-UC7), subtraction (UC12), division (UC12).
+- Automatic unit conversion for arithmetic; result in first operand's unit (or explicitly specified target unit).
 - Unit conversion API: static `Convert()` and instance `ConvertTo()` methods.
 - Tolerance-based equality and normalized `GetHashCode()`.
 - Type-safe cross-category prevention.
+- Division returns dimensionless scalar ratios.
 
 **Getting started**
 - Build: `dotnet build QuantityMeasurementApp`
@@ -72,3 +74,14 @@ Small .NET sample: length, weight, and volume quantities with multi-unit arithme
 - Updates generic `Quantity<U>` to handle volume conversions and operations.
 - Adds volume demonstrations in `Program.cs`.
 - Includes volume-specific tests for equality, conversion, and addition.
+
+**Implemented (UC12) — Subtraction and Division Operations**
+- Files: `QuantityMeasurementApp/Quantities/Quantity.cs`, `QuantityMeasurementApp/Program.cs`, `QuantityMeasurementApp.Tests/QuantityTests/QuantitySubtractionTests.cs`, `QuantityMeasurementApp.Tests/QuantityTests/QuantityDivisionTests.cs`
+- Adds comprehensive subtraction operations: `Subtract(Quantity<U> other)` and `Subtract(Quantity<U> other, U targetUnit)`.
+- Adds division operation: `Divide(Quantity<U> other)` returning dimensionless scalar ratio.
+- Supports both implicit (first operand's unit) and explicit target unit specification for subtraction.
+- Maintains immutability: all operations return new objects; originals unchanged.
+- Provides full validation: null checks, cross-category prevention, division-by-zero detection.
+- Demonstrates non-commutative properties: A - B ≠ B - A, A ÷ B ≠ B ÷ A.
+- Includes comprehensive unit tests (50+ test cases) covering same-unit, cross-unit, negative results, zero results, explicit target units, and edge cases.
+- Demonstrates subtraction and division across all measurement categories (length, weight, volume).

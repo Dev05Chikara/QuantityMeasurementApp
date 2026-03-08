@@ -20,6 +20,12 @@ namespace QuantityMeasurementApp
             Console.WriteLine("\n=== Volume Quantity Operations (UC11) ===\n");
             DemonstrateVolumeOperations();
 
+            Console.WriteLine("\n=== Subtraction Operations (UC12) ===\n");
+            DemonstrateSubtractionOperations();
+
+            Console.WriteLine("\n=== Division Operations (UC12) ===\n");
+            DemonstrateDivisionOperations();
+
             Console.WriteLine("\n=== Cross-Category Prevention (UC10) ===\n");
             DemonstrateCrossCategoryPrevention();
 
@@ -90,6 +96,78 @@ namespace QuantityMeasurementApp
         }
 
         /// <summary>
+        /// Demonstrates subtraction quantity operations using generic Quantity<U>.
+        /// Shows implicit and explicit target unit subtraction, negative results, and cross-unit handling.
+        /// </summary>
+        static void DemonstrateSubtractionOperations()
+        {
+            // Subtraction with implicit target unit (first operand's unit)
+            var feet1 = new Quantity<LengthUnit>(10, LengthUnit.FEET);
+            var inches1 = new Quantity<LengthUnit>(6, LengthUnit.INCHES);
+            DemonstrateSubtraction(feet1, inches1, "10 FEET - 6 INCHES → FEET (implicit)");
+
+            // Subtraction with explicit target unit
+            DemonstrateSubtractionWithTargetUnit(feet1, inches1, LengthUnit.INCHES, "10 FEET - 6 INCHES → INCHES (explicit)");
+
+            // Subtraction resulting in negative
+            var feet2 = new Quantity<LengthUnit>(5, LengthUnit.FEET);
+            var feet3 = new Quantity<LengthUnit>(10, LengthUnit.FEET);
+            DemonstrateSubtraction(feet2, feet3, "5 FEET - 10 FEET → negative result");
+
+            // Subtraction resulting in zero
+            var feet4 = new Quantity<LengthUnit>(10, LengthUnit.FEET);
+            var inches2 = new Quantity<LengthUnit>(120, LengthUnit.INCHES);
+            DemonstrateSubtraction(feet4, inches2, "10 FEET - 120 INCHES → 0 (equivalent quantities)");
+
+            // Weight subtraction
+            var kg1 = new Quantity<WeightUnit>(10, WeightUnit.KILOGRAM);
+            var grams1 = new Quantity<WeightUnit>(5000, WeightUnit.GRAM);
+            DemonstrateSubtraction(kg1, grams1, "10 KILOGRAM - 5000 GRAM → KILOGRAM");
+
+            // Volume subtraction
+            var litre1 = new Quantity<VolumeUnit>(5, VolumeUnit.LITRE);
+            var ml1 = new Quantity<VolumeUnit>(500, VolumeUnit.MILLILITRE);
+            DemonstrateSubtraction(litre1, ml1, "5 LITRE - 500 MILLILITRE → LITRE");
+        }
+
+        /// <summary>
+        /// Demonstrates division quantity operations using generic Quantity<U>.
+        /// Shows same-unit and cross-unit division with dimensionless scalar results.
+        /// </summary>
+        static void DemonstrateDivisionOperations()
+        {
+            // Division with same units
+            var feet1 = new Quantity<LengthUnit>(10, LengthUnit.FEET);
+            var feet2 = new Quantity<LengthUnit>(2, LengthUnit.FEET);
+            DemonstrateDivision(feet1, feet2, "10 FEET ÷ 2 FEET");
+
+            // Division with different units (same category)
+            var inches1 = new Quantity<LengthUnit>(24, LengthUnit.INCHES);
+            var feet3 = new Quantity<LengthUnit>(2, LengthUnit.FEET);
+            DemonstrateDivision(inches1, feet3, "24 INCHES ÷ 2 FEET");
+
+            // Division resulting in ratio < 1
+            var feet4 = new Quantity<LengthUnit>(5, LengthUnit.FEET);
+            var feet5 = new Quantity<LengthUnit>(10, LengthUnit.FEET);
+            DemonstrateDivision(feet4, feet5, "5 FEET ÷ 10 FEET (ratio < 1)");
+
+            // Weight division
+            var kg1 = new Quantity<WeightUnit>(10, WeightUnit.KILOGRAM);
+            var gramsDivisor = new Quantity<WeightUnit>(5000, WeightUnit.GRAM);
+            DemonstrateDivision(kg1, gramsDivisor, "10 KILOGRAM ÷ 5000 GRAM");
+
+            // Volume division
+            var litre1 = new Quantity<VolumeUnit>(10, VolumeUnit.LITRE);
+            var litre2 = new Quantity<VolumeUnit>(5, VolumeUnit.LITRE);
+            DemonstrateDivision(litre1, litre2, "10 LITRE ÷ 5 LITRE");
+
+            // Division with small result
+            var gramSmall = new Quantity<WeightUnit>(2000, WeightUnit.GRAM);
+            var kgLarge = new Quantity<WeightUnit>(1, WeightUnit.KILOGRAM);
+            DemonstrateDivision(gramSmall, kgLarge, "2000 GRAM ÷ 1 KILOGRAM (ratio < 1)");
+        }
+
+        /// <summary>
         /// Demonstrates prevention of cross-category comparisons.
         /// Shows that Quantity<LengthUnit> and Quantity<WeightUnit> are type-safe.
         /// </summary>
@@ -101,6 +179,19 @@ namespace QuantityMeasurementApp
             Console.WriteLine("Comparing 1 FEET with 1 KILOGRAM (different categories):");
             Console.WriteLine($"  Are they equal? {feet.Equals(kilograms)}");
             Console.WriteLine("  → Prevented by type-safe Quantity<U> generic class");
+
+            // Cross-category arithmetic is prevented at compile-time by generics
+            Console.WriteLine("\nCross-category subtraction and division are compile-time errors:");
+            Console.WriteLine("  feet.Subtract(kilograms) → Compile-time error (type mismatch)");
+            Console.WriteLine("  feet.Divide(kilograms) → Compile-time error (type mismatch)");
+            Console.WriteLine("  → Generic type parameters ensure category safety");
+
+            // Demonstrate arithmetic within same category works fine
+            var feet2 = new Quantity<LengthUnit>(10, LengthUnit.FEET);
+            var feet3 = new Quantity<LengthUnit>(5, LengthUnit.FEET);
+            Console.WriteLine("\nWithin-category subtraction and division work correctly:");
+            Console.WriteLine($"  10 FEET - 5 FEET = {feet2.Subtract(feet3)}");
+            Console.WriteLine($"  10 FEET ÷ 5 FEET = {feet2.Divide(feet3)}");
         }
 
         /// <summary>
@@ -170,6 +261,64 @@ namespace QuantityMeasurementApp
             var result = q1.Add(q2, targetUnit);
             Console.WriteLine($"Addition: {description}");
             Console.WriteLine($"  {q1} + {q2} = {result}");
+        }
+
+        /// <summary>
+        /// Generic method demonstrating quantity subtraction.
+        /// Reusable for any unit type with IMeasurable-compliant extension methods.
+        /// </summary>
+        /// <typeparam name="U">Unit type (enum)</typeparam>
+        /// <param name="q1">First quantity (minuend)</param>
+        /// <param name="q2">Second quantity (subtrahend)</param>
+        /// <param name="description">Human-readable description of subtraction</param>
+        static void DemonstrateSubtraction<U>(Quantity<U> q1, Quantity<U> q2, string description)
+            where U : Enum
+        {
+            var result = q1.Subtract(q2);
+            Console.WriteLine($"Subtraction: {description}");
+            Console.WriteLine($"  {q1} - {q2} = {result}");
+        }
+
+        /// <summary>
+        /// Generic method demonstrating quantity subtraction with explicit target unit.
+        /// Reusable for any unit type with IMeasurable-compliant extension methods.
+        /// </summary>
+        /// <typeparam name="U">Unit type (enum)</typeparam>
+        /// <param name="q1">First quantity (minuend)</param>
+        /// <param name="q2">Second quantity (subtrahend)</param>
+        /// <param name="targetUnit">Target unit for result</param>
+        /// <param name="description">Human-readable description of subtraction</param>
+        static void DemonstrateSubtractionWithTargetUnit<U>(Quantity<U> q1, Quantity<U> q2, U targetUnit, string description)
+            where U : Enum
+        {
+            var result = q1.Subtract(q2, targetUnit);
+            Console.WriteLine($"Subtraction: {description}");
+            Console.WriteLine($"  {q1} - {q2} = {result}");
+        }
+
+        /// <summary>
+        /// Generic method demonstrating quantity division.
+        /// Returns a dimensionless scalar ratio.
+        /// Reusable for any unit type with IMeasurable-compliant extension methods.
+        /// </summary>
+        /// <typeparam name="U">Unit type (enum)</typeparam>
+        /// <param name="q1">First quantity (dividend)</param>
+        /// <param name="q2">Second quantity (divisor)</param>
+        /// <param name="description">Human-readable description of division</param>
+        static void DemonstrateDivision<U>(Quantity<U> q1, Quantity<U> q2, string description)
+            where U : Enum
+        {
+            try
+            {
+                var result = q1.Divide(q2);
+                Console.WriteLine($"Division: {description}");
+                Console.WriteLine($"  {q1} ÷ {q2} = {result}");
+            }
+            catch (ArithmeticException ex)
+            {
+                Console.WriteLine($"Division: {description}");
+                Console.WriteLine($"  ERROR: {ex.Message}");
+            }
         }
     }
 }

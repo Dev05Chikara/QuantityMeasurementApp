@@ -118,6 +118,70 @@ namespace QuantityMeasurementApp.Quantities
         }
 
         /// <summary>
+        /// Subtracts another quantity from this quantity, returning result in this quantity's unit.
+        /// </summary>
+        /// <param name="other">Quantity to subtract</param>
+        /// <returns>New quantity with difference in first operand's unit</returns>
+        /// <exception cref="ArgumentException">Thrown when other is null or from different category</exception>
+        public Quantity<U> Subtract(Quantity<U> other)
+        {
+            return Subtract(other, Unit);
+        }
+
+        /// <summary>
+        /// Subtracts another quantity from this quantity with explicit target unit specification.
+        /// </summary>
+        /// <param name="other">Quantity to subtract</param>
+        /// <param name="targetUnit">Target unit for result</param>
+        /// <returns>New quantity with difference in target unit</returns>
+        /// <exception cref="ArgumentException">Thrown when other is null, targetUnit is null, or from different category</exception>
+        public Quantity<U> Subtract(Quantity<U> other, U targetUnit)
+        {
+            if (other == null)
+                throw new ArgumentException("Cannot subtract null quantity");
+
+            if (targetUnit == null)
+                throw new ArgumentException("Target unit cannot be null");
+
+            // Cross-category protection
+            if (Unit.GetType() != other.Unit.GetType())
+                throw new ArgumentException("Cannot subtract quantities of different measurement categories");
+
+            double base1 = ConvertToBase(Unit, Value);
+            double base2 = ConvertToBase(other.Unit, other.Value);
+
+            double difference = base1 - base2;
+            double result = ConvertFromBase(targetUnit, difference);
+
+            return new Quantity<U>(Math.Round(result, 2), targetUnit);
+        }
+
+        /// <summary>
+        /// Divides this quantity by another quantity, returning a dimensionless scalar ratio.
+        /// </summary>
+        /// <param name="other">Quantity to divide by</param>
+        /// <returns>Scalar ratio (dimensionless double)</returns>
+        /// <exception cref="ArgumentException">Thrown when other is null or from different category</exception>
+        /// <exception cref="ArithmeticException">Thrown when dividing by zero quantity</exception>
+        public double Divide(Quantity<U> other)
+        {
+            if (other == null)
+                throw new ArgumentException("Cannot divide by null quantity");
+
+            // Cross-category protection
+            if (Unit.GetType() != other.Unit.GetType())
+                throw new ArgumentException("Cannot divide quantities of different measurement categories");
+
+            double base1 = ConvertToBase(Unit, Value);
+            double base2 = ConvertToBase(other.Unit, other.Value);
+
+            if (base2 == 0.0)
+                throw new ArithmeticException("Cannot divide by zero quantity");
+
+            return base1 / base2;
+        }
+
+        /// <summary>
         /// Compares two quantities for equality using base unit normalization.
         /// </summary>
         /// <param name="obj">Object to compare</param>
