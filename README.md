@@ -100,3 +100,22 @@ Small .NET sample: length, weight, and volume quantities with multi-unit arithme
 - Demonstrates clean separation of concerns: public methods handle API consistency, private helpers handle implementation details.
 - Validates consistent error handling: same exceptions and messages across all operations.
 - Preserves immutability, rounding behavior, and mathematical properties from UC12.
+
+**Implemented (UC14) — Temperature Measurement with Selective Arithmetic Support and IMeasurable Refactoring**
+- Files: `QuantityMeasurementApp/Interfaces/IMeasurable.cs`, `QuantityMeasurementApp/Units/TemperatureUnit.cs`, `QuantityMeasurementApp/Quantities/Quantity.cs`, `QuantityMeasurementApp/Program.cs`, `QuantityMeasurementApp.Tests/QuantityTests/QuantityTemperatureTests.cs`
+- Refactors `IMeasurable` interface to support optional arithmetic operations through default methods, enabling selective arithmetic constraints.
+- Introduces `SupportsArithmetic` functional interface (delegate) for indicating operation capability.
+- Adds `SupportsArithmeticOperations()` default method returning true for backward compatibility.
+- Adds `ValidateOperationSupport()` default method for pre-arithmetic validation.
+- Creates `TemperatureUnit` enum with CELSIUS, FAHRENHEIT, KELVIN units supporting non-linear conversions (Celsius as base unit).
+- Implements temperature conversions using lambda expressions: °F = (°C × 9/5) + 32, K = °C + 273.15.
+- Selectively disables arithmetic operations for temperature units by overriding `SupportsArithmeticOperations()` to return false.
+- Throws `NotSupportedException` with descriptive messages for temperature arithmetic operations (addition, subtraction, division).
+- Updates `Quantity<U>` class with pattern matching in `ConvertToBase()` and `ConvertFromBase()` methods for temperature support.
+- Enhances `PerformBaseArithmetic()` with operation validation before arithmetic execution.
+- Updates `GetUnitName()` method to support temperature units in string representations.
+- Adds comprehensive temperature demonstrations in `Program.cs` showing equality (0°C = 32°F = 273.15K), conversions, and unsupported operations.
+- Includes 17 comprehensive temperature tests covering equality across units, conversion accuracy, round-trip conversions, arithmetic rejection, cross-category prevention, and edge cases.
+- Maintains full backward compatibility: all existing UC1-UC13 functionality preserved, 104 total tests pass.
+- Demonstrates physical accuracy: temperature arithmetic disabled as it lacks meaningful physical interpretation in most contexts.
+- Validates selective arithmetic support: length/weight/volume support arithmetic, temperature supports only equality and conversion.

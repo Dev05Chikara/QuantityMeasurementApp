@@ -71,6 +71,8 @@ namespace QuantityMeasurementApp.Quantities
                 return w.ConvertToBaseUnit(value);
             if (unit is VolumeUnit v)
                 return v.ConvertToBaseUnit(value);
+            if (unit is TemperatureUnit t)
+                return t.ConvertToBaseUnit(value);
 
             throw new ArgumentException("Unsupported unit type");
         }
@@ -96,6 +98,8 @@ namespace QuantityMeasurementApp.Quantities
                 return w.ConvertFromBaseUnit(baseValue);
             if (unit is VolumeUnit v)
                 return v.ConvertFromBaseUnit(baseValue);
+            if (unit is TemperatureUnit t)
+                return t.ConvertFromBaseUnit(baseValue);
 
             throw new ArgumentException("Unsupported unit type");
         }
@@ -136,8 +140,15 @@ namespace QuantityMeasurementApp.Quantities
         /// <param name="operation">Arithmetic operation to perform</param>
         /// <returns>Result in base units</returns>
         /// <exception cref="ArithmeticException">Thrown for division by zero</exception>
+        /// <exception cref="NotSupportedException">Thrown when operation is not supported by the unit type</exception>
         private double PerformBaseArithmetic(Quantity<U> other, ArithmeticOperation operation)
         {
+            // Validate operation support for this unit type
+            if (Unit is TemperatureUnit tempUnit)
+            {
+                tempUnit.ValidateOperationSupport(operation.ToString());
+            }
+
             double base1 = ConvertToBase(Unit, Value);
             double base2 = ConvertToBase(other.Unit, other.Value);
 
@@ -263,6 +274,8 @@ namespace QuantityMeasurementApp.Quantities
                 return w.GetUnitName();
             if (unit is VolumeUnit v)
                 return v.GetUnitName();
+            if (unit is TemperatureUnit t)
+                return t.GetUnitName();
 
             throw new ArgumentException("Unsupported unit type");
         }

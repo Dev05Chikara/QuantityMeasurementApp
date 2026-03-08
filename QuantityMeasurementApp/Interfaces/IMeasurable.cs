@@ -1,6 +1,11 @@
 namespace QuantityMeasurementApp.Interfaces
 {
     /// <summary>
+    /// Functional interface to indicate whether a measurable unit supports arithmetic operations.
+    /// </summary>
+    public delegate bool SupportsArithmetic();
+
+    /// <summary>
     /// Defines a contract for all measurable units.
     /// Ensures consistent conversion behavior across different measurement categories.
     /// </summary>
@@ -29,5 +34,20 @@ namespace QuantityMeasurementApp.Interfaces
         /// Returns readable unit name.
         /// </summary>
         string GetUnitName();
+
+        /// <summary>
+        /// Indicates whether this unit supports arithmetic operations.
+        /// Default implementation returns true for backward compatibility.
+        /// </summary>
+        public bool SupportsArithmeticOperations() => true;
+
+        /// <summary>
+        /// Validates that the specified operation is supported by this unit.
+        /// Default implementation does nothing (allows all operations).
+        /// Units can override to throw exceptions for unsupported operations.
+        /// </summary>
+        /// <param name="operation">Name of the operation being attempted</param>
+        /// <exception cref="NotSupportedException">Thrown when operation is not supported</exception>
+        public void ValidateOperationSupport(string operation) { }
     }
 }

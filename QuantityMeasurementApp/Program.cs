@@ -31,6 +31,9 @@ namespace QuantityMeasurementApp
 
             Console.WriteLine("\n=== Generic Quantity Interface (UC10) ===\n");
             DemonstrateGenericInterface();
+
+            Console.WriteLine("\n=== Temperature Operations (UC14) ===\n");
+            DemonstrateTemperatureOperations();
         }
 
         /// <summary>
@@ -319,6 +322,65 @@ namespace QuantityMeasurementApp
                 Console.WriteLine($"Division: {description}");
                 Console.WriteLine($"  ERROR: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Demonstrates temperature quantity operations using generic Quantity<TemperatureUnit>.
+        /// Shows equality across temperature units, conversion, and selective arithmetic constraints (UC14).
+        /// </summary>
+        static void DemonstrateTemperatureOperations()
+        {
+            // UC14: Temperature equality across units (0°C = 32°F = 273.15K)
+            var celsius = new Quantity<TemperatureUnit>(0, TemperatureUnit.CELSIUS);
+            var fahrenheit = new Quantity<TemperatureUnit>(32, TemperatureUnit.FAHRENHEIT);
+            var kelvin = new Quantity<TemperatureUnit>(273.15, TemperatureUnit.KELVIN);
+            DemonstrateEquality(celsius, fahrenheit, "0 CELSIUS vs 32 FAHRENHEIT");
+            DemonstrateEquality(celsius, kelvin, "0 CELSIUS vs 273.15 KELVIN");
+            DemonstrateEquality(fahrenheit, kelvin, "32 FAHRENHEIT vs 273.15 KELVIN");
+
+            // UC14: Temperature unit conversion
+            DemonstrateConversion(celsius, TemperatureUnit.FAHRENHEIT, "0 CELSIUS to FAHRENHEIT");
+            DemonstrateConversion(celsius, TemperatureUnit.KELVIN, "0 CELSIUS to KELVIN");
+            DemonstrateConversion(fahrenheit, TemperatureUnit.CELSIUS, "32 FAHRENHEIT to CELSIUS");
+            DemonstrateConversion(fahrenheit, TemperatureUnit.KELVIN, "32 FAHRENHEIT to KELVIN");
+            DemonstrateConversion(kelvin, TemperatureUnit.CELSIUS, "273.15 KELVIN to CELSIUS");
+            DemonstrateConversion(kelvin, TemperatureUnit.FAHRENHEIT, "273.15 KELVIN to FAHRENHEIT");
+
+            // UC14: Temperature arithmetic operations are NOT supported
+            Console.WriteLine("\nTemperature Arithmetic Operations (Unsupported):");
+            try
+            {
+                var result = celsius.Add(fahrenheit);
+                Console.WriteLine($"  ERROR: Addition should have failed but returned {result}");
+            }
+            catch (NotSupportedException ex)
+            {
+                Console.WriteLine($"  Addition: 0 CELSIUS + 32 FAHRENHEIT → ERROR: {ex.Message}");
+            }
+
+            try
+            {
+                var result = celsius.Subtract(fahrenheit);
+                Console.WriteLine($"  ERROR: Subtraction should have failed but returned {result}");
+            }
+            catch (NotSupportedException ex)
+            {
+                Console.WriteLine($"  Subtraction: 0 CELSIUS - 32 FAHRENHEIT → ERROR: {ex.Message}");
+            }
+
+            try
+            {
+                var result = celsius.Divide(fahrenheit);
+                Console.WriteLine($"  ERROR: Division should have failed but returned {result}");
+            }
+            catch (NotSupportedException ex)
+            {
+                Console.WriteLine($"  Division: 0 CELSIUS ÷ 32 FAHRENHEIT → ERROR: {ex.Message}");
+            }
+
+            Console.WriteLine("\n  → Temperature units support only equality and conversion");
+            Console.WriteLine("  → Arithmetic operations are selectively disabled for physical accuracy");
+            Console.WriteLine("  → IMeasurable interface refactored with optional operation support");
         }
     }
 }
