@@ -1,9 +1,10 @@
 # QuantityMeasurementApp
 
-Small .NET sample: length quantities with multi-unit arithmetic and conversions.
+Small .NET sample: length and weight quantities with multi-unit arithmetic and conversions.
 
 **Features**
 - `QuantityLength` supports addition across different units (FEET, INCHES, YARDS, CENTIMETERS).
+- `QuantityWeight` supports addition across different units (KILOGRAMS, GRAMS, POUNDS).
 - Automatic unit conversion for arithmetic; result in first operand's unit.
 - Unit conversion API: static `Convert()` and instance `ConvertTo()` methods.
 - Tolerance-based equality and normalized `GetHashCode()`.
@@ -12,6 +13,10 @@ Small .NET sample: length quantities with multi-unit arithmetic and conversions.
 - Build: `dotnet build QuantityMeasurementApp`
 - Run demo: `dotnet run --project QuantityMeasurementApp`
 - Run tests: `dotnet test QuantityMeasurementApp.Tests`
+
+**Implemented (UC9) — Replicate Length pattern for Weight**
+- Files: `QuantityMeasurementApp/QuantityWeight.cs`, `QuantityMeasurementApp/WeightUnit.cs`, `QuantityMeasurementApp/Program.cs`, `QuantityMeasurementApp.Tests/QuantityWeightTests.cs`
+- Implements weight quantities with multi-unit arithmetic and conversions, replicating the length pattern. Supports addition across different units (KILOGRAMS, GRAMS, POUNDS), automatic unit conversion for arithmetic, unit conversion API with static `Convert()` and instance `ConvertTo()` methods, tolerance-based equality, and addition with explicit target unit specification.
 
 **Implemented (UC8) — Refactor QuantityLength for cleaner responsibilities**
 - Files: `QuantityMeasurementApp/QuantityLength.cs`, `QuantityMeasurementApp/Program.cs`, `QuantityMeasurementApp.Tests/QuantityLengthAdditionTests.cs`
