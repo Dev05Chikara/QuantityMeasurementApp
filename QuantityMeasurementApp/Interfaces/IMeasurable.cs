@@ -49,5 +49,10 @@ namespace QuantityMeasurementApp.Interfaces
         /// <param name="operation">Name of the operation being attempted</param>
         /// <exception cref="NotSupportedException">Thrown when operation is not supported</exception>
         public void ValidateOperationSupport(string operation) { }
+
+        /// <summary>
+        /// Returns the measurement type (e.g., "Length", "Weight").
+        /// </summary>
+        string GetMeasurementType();
     }
 }

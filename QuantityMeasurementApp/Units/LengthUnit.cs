@@ -68,5 +68,14 @@ namespace QuantityMeasurementApp.Units
         {
             return unit.ToString();
         }
+
+        /// <summary>
+        /// Returns the measurement type.
+        /// Implements IMeasurable interface method.
+        /// </summary>
+        public static string GetMeasurementType(this LengthUnit unit)
+        {
+            return "Length";
+        }
     }
 }

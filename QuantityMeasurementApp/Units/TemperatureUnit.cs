@@ -148,5 +148,14 @@ namespace QuantityMeasurementApp.Units
                     "Temperature arithmetic is not meaningful in most practical contexts.");
             }
         }
+
+        /// <summary>
+        /// Returns the measurement type.
+        /// Implements IMeasurable interface method.
+        /// </summary>
+        public static string GetMeasurementType(this TemperatureUnit unit)
+        {
+            return "Temperature";
+        }
     }
 }
