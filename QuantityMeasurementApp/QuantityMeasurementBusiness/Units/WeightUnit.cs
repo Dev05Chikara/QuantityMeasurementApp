@@ -1,6 +1,4 @@
-using QuantityMeasurementApp.Interfaces;
-
-namespace QuantityMeasurementApp.Units
+namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Units
 {
     /// <summary>
     /// Enumeration representing supported weight units.

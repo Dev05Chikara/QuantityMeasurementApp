@@ -1,6 +1,6 @@
-using QuantityMeasurementApp.Interfaces;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces;
 
-namespace QuantityMeasurementApp.Units
+namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Units
 {
     /// <summary>
     /// Temperature measurement units supporting Celsius, Fahrenheit, and Kelvin.

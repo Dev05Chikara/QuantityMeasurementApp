@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using QuantityMeasurementApp.Units;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Units;
 
 namespace QuantityMeasurementApp.Tests.InterfaceTests
 {

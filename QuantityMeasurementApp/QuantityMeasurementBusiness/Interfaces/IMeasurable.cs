@@ -1,4 +1,4 @@
-namespace QuantityMeasurementApp.Interfaces
+namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces
 {
     /// <summary>
     /// Functional interface to indicate whether a measurable unit supports arithmetic operations.

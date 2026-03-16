@@ -1,12 +1,12 @@
 using System;
-using QuantityMeasurementApp.Exceptions;
-using QuantityMeasurementApp.Interfaces;
-using QuantityMeasurementApp.Models;
-using QuantityMeasurementApp.Quantities;
-using QuantityMeasurementApp.Repositories;
-using QuantityMeasurementApp.Units;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Units;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Quantities;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Exceptions;
+using QuantityMeasurementApp.QuantityMeasurementModel;
+using QuantityMeasurementApp.QuantityMeasurementRepo.Interfaces;
 
-namespace QuantityMeasurementApp.Services
+namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
 {
     /// <summary>
     /// QuantityMeasurementServiceImpl implements IQuantityMeasurementService that provides functionality for quantity measurement operations.

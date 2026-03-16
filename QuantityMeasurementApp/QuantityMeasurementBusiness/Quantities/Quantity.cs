@@ -1,7 +1,6 @@
-using QuantityMeasurementApp.Interfaces;
-using QuantityMeasurementApp.Units;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Units;
 
-namespace QuantityMeasurementApp.Quantities
+namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Quantities
 {
     /// <summary>
     /// Generic quantity class supporting multiple measurement categories.

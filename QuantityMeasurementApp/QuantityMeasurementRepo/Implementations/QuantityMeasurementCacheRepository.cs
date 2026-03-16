@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.QuantityMeasurementModel;
 
-namespace QuantityMeasurementApp.Repositories
+using QuantityMeasurementApp.QuantityMeasurementRepo.Interfaces;
+
+namespace QuantityMeasurementApp.QuantityMeasurementRepo.Implementations
 {
     /// <summary>
     /// QuantityMeasurementCacheRepository is a repository class for managing persistence operations related to QuantityMeasurementEntity.

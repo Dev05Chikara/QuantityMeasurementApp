@@ -1,6 +1,6 @@
-using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.QuantityMeasurementModel;
 
-namespace QuantityMeasurementApp.Services
+namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces
 {
     /// <summary>
     /// IQuantityMeasurementService interface provides contract methods for performing quantity measurement operations,

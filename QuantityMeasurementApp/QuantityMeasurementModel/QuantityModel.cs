@@ -1,7 +1,7 @@
 using System;
-using QuantityMeasurementApp.Interfaces;
+using QuantityMeasurementApp.QuantityMeasurementBusiness;
 
-namespace QuantityMeasurementApp.Models
+namespace QuantityMeasurementApp.QuantityMeasurementModel
 {
     /// <summary>
     /// A generic POJO model class for representing a quantity with its associated unit of measurement.

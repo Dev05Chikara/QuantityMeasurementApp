@@ -1,7 +1,7 @@
 using System;
-using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.QuantityMeasurementModel;
 
-namespace QuantityMeasurementApp.Models
+namespace QuantityMeasurementApp.QuantityMeasurementModel
 {
     /// <summary>
     /// The QuantityMeasurementEntity is designed to be a comprehensive data holder for all aspects of a quantity measurement operation,

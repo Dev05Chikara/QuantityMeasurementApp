@@ -1,6 +1,6 @@
 using System;
 
-namespace QuantityMeasurementApp.Models
+namespace QuantityMeasurementApp.QuantityMeasurementModel
 {
     /// <summary>
     /// Data Transfer Object (DTO) for holding quantity measurement input data - value and corresponding unit and its measurement.
@@ -35,7 +35,7 @@ namespace QuantityMeasurementApp.Models
             string GetMeasurementType();
         }
 
-        // Note: In a full implementation, the enums LengthUnit, VolumeUnit, etc., would be defined here
+        // In a full implementation, the enums LengthUnit, VolumeUnit, etc., would be defined here
         // to provide a self-contained representation. For this refactoring, we use the existing units.
     }
 }

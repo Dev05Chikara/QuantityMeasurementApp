@@ -1,6 +1,6 @@
 using System;
 
-namespace QuantityMeasurementApp.Exceptions
+namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Exceptions
 {
     /// <summary>
     /// Custom exception class used to handle errors and exceptional conditions related to quantity measurement operations.

@@ -1,6 +1,6 @@
-using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.QuantityMeasurementModel;
 
-namespace QuantityMeasurementApp.Repositories
+namespace QuantityMeasurementApp.QuantityMeasurementRepo.Interfaces
 {
     /// <summary>
     /// The IQuantityMeasurementRepository serves as the data access layer for the application,
