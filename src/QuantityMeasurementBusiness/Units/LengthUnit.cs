@@ -9,7 +9,8 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Units
         FEET,
         INCHES,
         YARDS,
-        CENTIMETERS
+        CENTIMETERS,
+        MILLIMETER
     }
 
     /// <summary>
@@ -26,7 +27,8 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Units
             { LengthUnit.FEET, 12.0 },
             { LengthUnit.INCHES, 1.0 },
             { LengthUnit.YARDS, 36.0 },
-            { LengthUnit.CENTIMETERS, 0.393701 }
+            { LengthUnit.CENTIMETERS, 0.393701 },
+            { LengthUnit.MILLIMETER, 0.0393701}
         };
 
         /// <summary>
