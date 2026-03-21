@@ -1,6 +1,7 @@
 using QuantityMeasurementApp.QuantityMeasurementBusiness.Services;
 using QuantityMeasurementApp.QuantityMeasurementRepo.Implementations;
 using QuantityMeasurementApp.QuantityMeasurementUI;
+using QuantityMeasurementApp.interfaces;
 using ControllerType = QuantityMeasurementApp.QuantityMeasurementController.QuantityMeasurementController;
 
 namespace QuantityMeasurementApp
@@ -15,9 +16,9 @@ namespace QuantityMeasurementApp
             var repository = QuantityMeasurementCacheRepository.Instance;
             var service = new QuantityMeasurementServiceImpl(repository);
             var controller = new ControllerType(service);
-            var menu = new Menu(controller);
+            IApplicationUI applicationUI = new Menu(controller);
 
-            menu.Run();
+            applicationUI.Run();
         }
     }
 }

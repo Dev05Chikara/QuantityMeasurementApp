@@ -1,10 +1,9 @@
 using System;
-using QuantityMeasurementApp.QuantityMeasurementBusiness;
 
 namespace QuantityMeasurementApp.QuantityMeasurementModel
 {
     /// <summary>
-    /// A generic POJO model class for representing a quantity with its associated unit of measurement.
+    /// A generic model class for representing a quantity with its associated unit of measurement.
     /// Used internally within the service layer for performing operations on quantities.
     /// </summary>
     public class QuantityModel

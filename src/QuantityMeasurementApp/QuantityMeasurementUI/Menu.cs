@@ -1,6 +1,7 @@
 using System;
 using QuantityMeasurementApp.QuantityMeasurementBusiness.Units;
 using QuantityMeasurementApp.QuantityMeasurementModel;
+using QuantityMeasurementApp.interfaces;
 using ControllerType = QuantityMeasurementApp.QuantityMeasurementController.QuantityMeasurementController;
 
 namespace QuantityMeasurementApp.QuantityMeasurementUI
@@ -8,7 +9,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
     /// <summary>
     /// Handles all console-based user interaction for quantity measurement operations.
     /// </summary>
-    public class Menu
+    public class Menu : IApplicationUI
     {
         private readonly ControllerType _controller;
 
@@ -91,7 +92,15 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                 if (isConversion)
                 {
                     var targetUnit = PromptForUnit(measurementType, "Enter target unit");
-                    _controller.DemonstrateConversion(dto1, targetUnit);
+                    try
+                    {
+                        var result = _controller.Convert(dto1, targetUnit);
+                        Console.WriteLine($"\nSuccess: {dto1.Value} {dto1.UnitName} is converted to {result.Value} {targetUnit}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: Conversion failed: {ex.Message}");
+                    }
                     continue;
                 }
 
@@ -105,13 +114,71 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                 };
 
                 if (isComparison)
-                    _controller.DemonstrateEquality(dto1, dto2);
+                {
+                    try
+                    {
+                        bool isEqual = _controller.Compare(dto1, dto2);
+                        if (isEqual)
+                        {
+                            Console.WriteLine($"\nSuccess: {dto1.Value} {dto1.UnitName} is equal to {dto2.Value} {dto2.UnitName}");
+                        }
+                        else
+                        {
+                            double val1InBaseUnit = ConvertToBaseUnit(measurementType, dto1.Value, dto1.UnitName);
+                            double val2InBaseUnit = ConvertToBaseUnit(measurementType, dto2.Value, dto2.UnitName);
+                            if (val1InBaseUnit > val2InBaseUnit)
+                            {
+                                Console.WriteLine($"\nSuccess: {dto1.Value} {dto1.UnitName} is higher than {dto2.Value} {dto2.UnitName}");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"\nSuccess: {dto2.Value} {dto2.UnitName} is higher than {dto1.Value} {dto1.UnitName}");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: Comparison failed: {ex.Message}");
+                    }
+                }
                 else if (isAdd)
-                    _controller.DemonstrateAddition(dto1, dto2);
+                {
+                    try
+                    {
+                        var result = _controller.Add(dto1, dto2);
+                        Console.WriteLine($"\nSuccess: Addition of {dto1.Value} {dto1.UnitName} and {dto2.Value} {dto2.UnitName} is {result.Value} {result.UnitName}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: Addition failed: {ex.Message}");
+                    }
+                }
                 else if (isSubtract)
-                    _controller.DemonstrateSubtraction(dto1, dto2);
+                {
+                    try
+                    {
+                        var result = _controller.Subtract(dto1, dto2);
+                        double absoluteResult = Math.Abs(result.Value);
+                        Console.WriteLine($"\nSuccess: Subtraction of {dto1.Value} {dto1.UnitName} and {dto2.Value} {dto2.UnitName} is {absoluteResult} {result.UnitName}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: Subtraction failed: {ex.Message}");
+                    }
+                }
                 else if (isDivide)
-                    _controller.DemonstrateDivision(dto1, dto2);
+                {
+                    try
+                    {
+                        var result = _controller.Divide(dto1, dto2);
+                        double absoluteResult = Math.Abs(result.Value);
+                        Console.WriteLine($"\nSuccess: Division of {dto1.Value} {dto1.UnitName} and {dto2.Value} {dto2.UnitName} is {absoluteResult}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: Division failed: {ex.Message}");
+                    }
+                }
             }
 
             Console.WriteLine("Goodbye.");
@@ -156,6 +223,55 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                 "Volume" => Enum.GetNames(typeof(VolumeUnit)),
                 "Temperature" => Enum.GetNames(typeof(TemperatureUnit)),
                 _ => Array.Empty<string>()
+            };
+        }
+
+        /// <summary>
+        /// Converts a value to base unit for comparison purposes.
+        /// </summary>
+        private static double ConvertToBaseUnit(string measurementType, double value, string unitName)
+        {
+            return measurementType switch
+            {
+                "Length" => ConvertLengthToBase(value, unitName),
+                "Weight" => ConvertWeightToBase(value, unitName),
+                "Volume" => ConvertVolumeToBase(value, unitName),
+                _ => value
+            };
+        }
+
+        private static double ConvertLengthToBase(double value, string unit)
+        {
+            return unit switch
+            {
+                nameof(LengthUnit.FEET) => value * 12,
+                nameof(LengthUnit.INCHES) => value,
+                nameof(LengthUnit.YARDS) => value * 36,
+                nameof(LengthUnit.CENTIMETERS) => value * 0.393701,
+                nameof(LengthUnit.MILLIMETER) => value * 0.0393701,
+                _ => value
+            };
+        }
+
+        private static double ConvertWeightToBase(double value, string unit)
+        {
+            return unit switch
+            {
+                nameof(WeightUnit.KILOGRAM) => value * 1000,
+                nameof(WeightUnit.GRAM) => value,
+                nameof(WeightUnit.TONNE) => value * 1000000,
+                _ => value
+            };
+        }
+
+        private static double ConvertVolumeToBase(double value, string unit)
+        {
+            return unit switch
+            {
+                nameof(VolumeUnit.LITRE) => value,
+                nameof(VolumeUnit.MILLILITRE) => value * 0.001,
+                nameof(VolumeUnit.GALLON) => value * 3.78541,
+                _ => value
             };
         }
     }

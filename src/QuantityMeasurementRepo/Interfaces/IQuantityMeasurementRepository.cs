@@ -1,4 +1,5 @@
 using QuantityMeasurementApp.QuantityMeasurementModel;
+using QuantityMeasurementApp.QuantityMeasurementRepo.Models;
 
 namespace QuantityMeasurementApp.QuantityMeasurementRepo.Interfaces
 {

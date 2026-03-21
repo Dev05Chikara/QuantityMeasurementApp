@@ -5,6 +5,7 @@ using QuantityMeasurementApp.QuantityMeasurementBusiness.Quantities;
 using QuantityMeasurementApp.QuantityMeasurementBusiness.Exceptions;
 using QuantityMeasurementApp.QuantityMeasurementModel;
 using QuantityMeasurementApp.QuantityMeasurementRepo.Interfaces;
+using QuantityMeasurementApp.QuantityMeasurementRepo.Models;
 
 namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
 {
@@ -34,7 +35,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         {
             try
             {
-                ValidateInputs(dto1, dto2, "COMPARE");
+                ValidateInputs(dto1, dto2);
 
                 var model1 = ConvertToModel(dto1);
                 var model2 = ConvertToModel(dto2);
@@ -73,7 +74,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         {
             try
             {
-                ValidateInput(dto, "CONVERT");
+                ValidateInput(dto);
 
                 var model = ConvertToModel(dto);
                 var quantity = CreateQuantity(model);
@@ -130,7 +131,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         {
             try
             {
-                ValidateInputs(dto1, dto2, "ADD");
+                ValidateInputs(dto1, dto2);
 
                 var model1 = ConvertToModel(dto1);
                 var model2 = ConvertToModel(dto2);
@@ -169,7 +170,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         {
             try
             {
-                ValidateInputs(dto1, dto2, "SUBTRACT");
+                ValidateInputs(dto1, dto2);
 
                 var model1 = ConvertToModel(dto1);
                 var model2 = ConvertToModel(dto2);
@@ -208,7 +209,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         {
             try
             {
-                ValidateInputs(dto1, dto2, "DIVIDE");
+                ValidateInputs(dto1, dto2);
 
                 var model1 = ConvertToModel(dto1);
                 var model2 = ConvertToModel(dto2);
@@ -241,8 +242,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         /// Validates a single input DTO.
         /// </summary>
         /// <param name="dto">The DTO to validate</param>
-        /// <param name="operation">The operation name</param>
-        private void ValidateInput(QuantityDTO dto, string operation)
+        private void ValidateInput(QuantityDTO dto)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             if (string.IsNullOrEmpty(dto.UnitName)) throw new ArgumentException("Unit name is required");
@@ -254,11 +254,10 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         /// </summary>
         /// <param name="dto1">First DTO</param>
         /// <param name="dto2">Second DTO</param>
-        /// <param name="operation">The operation name</param>
-        private void ValidateInputs(QuantityDTO dto1, QuantityDTO dto2, string operation)
+        private void ValidateInputs(QuantityDTO dto1, QuantityDTO dto2)
         {
-            ValidateInput(dto1, operation);
-            ValidateInput(dto2, operation);
+            ValidateInput(dto1);
+            ValidateInput(dto2);
             if (dto1.MeasurementType != dto2.MeasurementType)
                 throw new QuantityMeasurementException("Cannot perform operation on different measurement types");
         }

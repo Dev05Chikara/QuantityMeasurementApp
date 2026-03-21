@@ -4,9 +4,9 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Quantities
 {
     /// <summary>
     /// Generic quantity class supporting multiple measurement categories.
-    /// Works with any enum type that implements IMeasurable methods through extension methods.
+    /// Works with unit enums through their extension methods.
     /// </summary>
-    /// <typeparam name="U">Unit type (enum with IMeasurable-compliant extension methods)</typeparam>
+    /// <typeparam name="U">Unit enum type with conversion extension methods</typeparam>
     public class Quantity<U> where U : Enum
     {
         /// <summary>

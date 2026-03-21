@@ -1,23 +1,23 @@
 [
   {
     "Operand1": {
-      "Value": 10,
-      "UnitName": "CENTIMETERS",
-      "MeasurementType": "Length"
-    },
-    "Operand2": {
-      "Value": 12,
+      "Value": 25,
       "UnitName": "FEET",
       "MeasurementType": "Length"
     },
-    "Operation": "SUBTRACT",
+    "Operand2": {
+      "Value": 125,
+      "UnitName": "INCHES",
+      "MeasurementType": "Length"
+    },
+    "Operation": "ADD",
     "Result": {
-      "Value": -355.76,
-      "UnitName": "CENTIMETERS",
+      "Value": 35.42,
+      "UnitName": "FEET",
       "MeasurementType": "Length"
     },
     "ErrorMessage": null,
     "HasError": false,
-    "Timestamp": "2026-03-17T12:45:36.6501857+05:30"
+    "Timestamp": "2026-03-22T03:01:18.3974634+05:30"
   }
 ]

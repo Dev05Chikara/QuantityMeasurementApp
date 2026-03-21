@@ -119,3 +119,33 @@ Small .NET sample: length, weight, and volume quantities with multi-unit arithme
 - Maintains full backward compatibility: all existing UC1-UC13 functionality preserved, 104 total tests pass.
 - Demonstrates physical accuracy: temperature arithmetic disabled as it lacks meaningful physical interpretation in most contexts.
 - Validates selective arithmetic support: length/weight/volume support arithmetic, temperature supports only equality and conversion.
+
+**Implemented (UC15) — N-Tier Architecture Refactoring**
+- Refactors project into clean 5-layer N-Tier architecture ensuring separation of concerns and maintainability.
+- **Presentation Layer** (`QuantityMeasurementApp`): Handles user interaction via console menu; contains UI interface `IApplicationUI` and interactive `Menu` class; decoupled from business logic.
+- **Controller Layer** (`QuantityMeasurementController`): Thin orchestration layer; routes user requests to service layer; maintains request/response flow without business logic.
+- **Business Layer** (`QuantityMeasurementBusiness`): Core domain logic; includes `Quantity<U>` generic class, measurement units (Length, Weight, Volume, Temperature), unit conversion logic, arithmetic operations, and business exceptions.
+  - Units are defined as enum-only files in `Units/` folder (e.g., `LengthUnit.cs` contains only enum definition).
+  - Unit conversion implementations moved to separate `UnitExtensions/` folder with dedicated extension classes for each unit type.
+  - Service layer (`QuantityMeasurementServiceImpl`) implements `IQuantityMeasurementService` interface, providing measurement operations and coordinating with repository.
+- **Model/DTO Layer** (`QuantityMeasurementModel`): Data transfer objects only; contains `QuantityDTO` (user input/output), `QuantityModel` (internal domain model), and simple data holders; no persistence knowledge.
+- **Repository Layer** (`QuantityMeasurementRepo`): Data access abstraction; singleton `QuantityMeasurementCacheRepository` manages persistence; owns `QuantityMeasurementEntity` (moved from model layer) as persistence audit record in `QuantityMeasurementRepo/Models/` namespace.
+- **Cross-layer Benefits:**
+  - Enums belong to business layer as they represent domain concepts, not transport objects.
+  - Persistence entities (`QuantityMeasurementEntity`) live in repository layer, not model layer, keeping model focused on DTOs.
+  - Extension methods grouped by responsibility in `UnitExtensions/` improves discoverability and maintainability.
+  - Interfaces (`IApplicationUI`, `IQuantityMeasurementService`, `IQuantityMeasurementRepository`) enforce abstraction boundaries.
+- **Code Quality Improvements:**
+  - Removed unused interface `IMeasurable` that was declared but never directly implemented (units use extension methods instead).
+  - Removed unused helper method parameters that served no purpose.
+  - Eliminated unused nested DTO interface and stale documentation.
+  - Removed emoji symbols (✓, ✗) from console output, replacing with plain text prefixes (Success, Error) for better compatibility.
+  - Dead code cleanup: no ceremonial or temporary code remains.
+- **Structure Overview:**
+  ```
+  Presentation → Controller → Business → Model/DTO → Repository
+  (Menu)      (Orchestrator) (Domain  (Contracts)  (Persistence)
+                            Logic)
+  ```
+- **Validation:** All 104 tests pass; full backward compatibility maintained; architecture enforces layering discipline while enabling future feature additions without cross-layer coupling.
+- Architecture follows industry best practices for scalable, maintainable .NET applications with clear separation of concerns, consistent naming conventions, and logical folder organization.
