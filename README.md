@@ -7,6 +7,8 @@ Small .NET sample: length, weight, and volume quantities with multi-unit arithme
 - `Quantity<WeightUnit>` supports addition, subtraction, and division across different units (KILOGRAMS, GRAMS, POUNDS).
 - `Quantity<VolumeUnit>` supports addition, subtraction, and division across different units (LITRE, MILLILITRE, GALLON).
 - Generic `Quantity<U>` class for any measurement category implementing `IMeasurable`.
+- Database-backed operation history using SQL Server (UC16) via repository layer.
+- Menu option to retrieve and display persisted operation history in table format.
 - Comprehensive arithmetic operations: addition (UC6-UC7), subtraction (UC12), division (UC12).
 - Centralized arithmetic logic (UC13) enforcing DRY principle with unified validation and conversion.
 - Automatic unit conversion for arithmetic; result in first operand's unit (or explicitly specified target unit).
@@ -149,3 +151,28 @@ Small .NET sample: length, weight, and volume quantities with multi-unit arithme
   ```
 - **Validation:** All 104 tests pass; full backward compatibility maintained; architecture enforces layering discipline while enabling future feature additions without cross-layer coupling.
 - Architecture follows industry best practices for scalable, maintainable .NET applications with clear separation of concerns, consistent naming conventions, and logical folder organization.
+
+**Implemented (UC16) — SQL Database Integration for Operation History**
+- Replaces repository cache persistence with SQL Server persistence for operation history.
+- Keeps the same menu-driven N-Tier flow for Length, Weight, Volume, and Temperature operations.
+- Persists each user operation with category context and operands/results into `dbo.QuantityMeasurementHistory`.
+- Uses `ErrorMessage` for failed-operation tracking; no `HasError` database column is required.
+- Adds history retrieval from the repository and displays records in a readable table format from the menu.
+- Maintains repository abstraction via `IQuantityMeasurementRepository` while switching implementation to `QuantityMeasurementSqlRepository`.
+- Startup wiring now uses SQL repository with connection string configuration in `Program.cs`.
+
+UC16 database setup (SSMS)
+1. Create database:
+  - `CREATE DATABASE QuantityMeasurementDB;`
+  - `USE QuantityMeasurementDB;`
+2. Create table:
+  - `dbo.QuantityMeasurementHistory`
+  - Columns: `Id`, `Operation`, `Operand1Value`, `Operand1UnitName`, `Operand1MeasurementType`, `Operand2Value`, `Operand2UnitName`, `Operand2MeasurementType`, `ResultValue`, `ResultUnitName`, `ResultMeasurementType`, `ErrorMessage`, `CreatedAtUtc`.
+
+Recommended connection string (local SQL Express, Windows auth)
+- `Server=localhost\\SQLEXPRESS;Database=QuantityMeasurementDB;Integrated Security=True;TrustServerCertificate=True;`
+
+UC16 verification checklist
+1. Run the app and perform operations from multiple categories.
+2. Use menu option `View Operation History` and verify tabular output.
+3. Execute `SELECT TOP 20 * FROM dbo.QuantityMeasurementHistory ORDER BY Id DESC;` in SSMS and confirm inserted rows.
