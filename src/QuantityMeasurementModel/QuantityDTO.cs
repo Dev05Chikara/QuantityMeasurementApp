@@ -15,11 +15,11 @@ namespace QuantityMeasurementApp.QuantityMeasurementModel
         /// <summary>
         /// The unit name (e.g., "FEET", "KILOGRAM").
         /// </summary>
-        public string UnitName { get; set; }
+        public string UnitName { get; set; } = string.Empty;
 
         /// <summary>
         /// The measurement type (e.g., "Length", "Weight").
         /// </summary>
-        public string MeasurementType { get; set; }
+        public string MeasurementType { get; set; } = string.Empty;
     }
 }

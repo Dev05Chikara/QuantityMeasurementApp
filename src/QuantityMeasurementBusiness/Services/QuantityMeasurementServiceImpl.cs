@@ -239,6 +239,15 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         }
 
         /// <summary>
+        /// Returns all persisted operation history records.
+        /// </summary>
+        /// <returns>List of history entities</returns>
+        public List<QuantityMeasurementEntity> GetOperationHistory()
+        {
+            return _repository.GetAllMeasurements();
+        }
+
+        /// <summary>
         /// Validates a single input DTO.
         /// </summary>
         /// <param name="dto">The DTO to validate</param>

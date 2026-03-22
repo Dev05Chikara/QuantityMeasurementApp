@@ -1,4 +1,5 @@
 using QuantityMeasurementApp.QuantityMeasurementModel;
+using QuantityMeasurementApp.QuantityMeasurementRepo.Models;
 
 namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces
 {
@@ -47,5 +48,11 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces
         /// <param name="dto2">Second quantity DTO</param>
         /// <returns>Result DTO with quotient</returns>
         QuantityDTO Divide(QuantityDTO dto1, QuantityDTO dto2);
+
+        /// <summary>
+        /// Returns all persisted operation history records.
+        /// </summary>
+        /// <returns>List of history entities</returns>
+        List<QuantityMeasurementEntity> GetOperationHistory();
     }
 }

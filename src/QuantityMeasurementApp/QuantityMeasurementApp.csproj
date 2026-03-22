@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\QuantityMeasurementBusiness\**\*.cs" />
     <Compile Include="..\QuantityMeasurementController\**\*.cs" />
     <Compile Include="..\QuantityMeasurementModel\**\*.cs" />

@@ -27,6 +27,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                 Console.WriteLine("2) Weight");
                 Console.WriteLine("3) Volume");
                 Console.WriteLine("4) Temperature");
+                Console.WriteLine("5) View Operation History");
                 Console.WriteLine("0) Exit");
                 Console.Write("Select measurement type: ");
 
@@ -34,7 +35,13 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                 if (categoryInput == "0")
                     break;
 
-                string measurementType = categoryInput switch
+                if (categoryInput == "5")
+                {
+                    DisplayHistory();
+                    continue;
+                }
+
+                string? measurementType = categoryInput switch
                 {
                     "1" => "Length",
                     "2" => "Weight",
@@ -182,6 +189,93 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
             }
 
             Console.WriteLine("Goodbye.");
+        }
+
+        private void DisplayHistory()
+        {
+            try
+            {
+                var history = _controller.GetOperationHistory();
+                if (history.Count == 0)
+                {
+                    Console.WriteLine("\nNo operation history found.");
+                    return;
+                }
+
+                Console.WriteLine("\n=== Operation History ===");
+
+                const int colTimestamp = 19;
+                const int colType = 13;
+                const int colOperation = 10;
+                const int colOperand1 = 22;
+                const int colOperand2 = 22;
+                const int colResult = 22;
+                const int colError = 30;
+
+                string header =
+                    PadCell("Timestamp", colTimestamp) + " | " +
+                    PadCell("Type", colType) + " | " +
+                    PadCell("Operation", colOperation) + " | " +
+                    PadCell("Operand1", colOperand1) + " | " +
+                    PadCell("Operand2", colOperand2) + " | " +
+                    PadCell("Result", colResult) + " | " +
+                    PadCell("ErrorMessage", colError);
+
+                string separator = new string('-', header.Length);
+
+                Console.WriteLine(separator);
+                Console.WriteLine(header);
+                Console.WriteLine(separator);
+
+                foreach (var item in history)
+                {
+                    string measurementType = !string.IsNullOrWhiteSpace(item.Operand1.MeasurementType)
+                        ? item.Operand1.MeasurementType
+                        : item.Result?.MeasurementType ?? "Unknown";
+
+                    string row =
+                        PadCell(item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"), colTimestamp) + " | " +
+                        PadCell(measurementType, colType) + " | " +
+                        PadCell(item.Operation, colOperation) + " | " +
+                        PadCell(FormatQuantity(item.Operand1), colOperand1) + " | " +
+                        PadCell(FormatQuantity(item.Operand2), colOperand2) + " | " +
+                        PadCell(FormatQuantity(item.Result), colResult) + " | " +
+                        PadCell(item.ErrorMessage ?? "-", colError);
+
+                    Console.WriteLine(row);
+                }
+
+                Console.WriteLine(separator);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: Unable to fetch history: {ex.Message}");
+            }
+        }
+
+        private static string FormatQuantity(QuantityDTO? dto)
+        {
+            if (dto == null)
+            {
+                return "-";
+            }
+
+            return $"{dto.Value:0.####} {dto.UnitName}";
+        }
+
+        private static string PadCell(string value, int width)
+        {
+            if (value.Length <= width)
+            {
+                return value.PadRight(width);
+            }
+
+            if (width <= 3)
+            {
+                return value.Substring(0, width);
+            }
+
+            return value.Substring(0, width - 3) + "...";
         }
 
         private static string PromptForUnit(string measurementType, string prompt)

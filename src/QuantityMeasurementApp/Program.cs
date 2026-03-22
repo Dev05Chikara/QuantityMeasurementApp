@@ -13,7 +13,9 @@ namespace QuantityMeasurementApp
     {
         private static void Main(string[] args)
         {
-            var repository = QuantityMeasurementCacheRepository.Instance;
+            string connectionString ="Server=localhost\\SQLEXPRESS;Database=QuantityMeasurementDB;Integrated Security=True;TrustServerCertificate=True;";
+
+            var repository = new QuantityMeasurementSqlRepository(connectionString);
             var service = new QuantityMeasurementServiceImpl(repository);
             var controller = new ControllerType(service);
             IApplicationUI applicationUI = new Menu(controller);

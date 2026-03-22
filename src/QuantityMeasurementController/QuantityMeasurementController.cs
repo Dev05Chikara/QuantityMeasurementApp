@@ -2,6 +2,7 @@ using System;
 using QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces;
 using QuantityMeasurementApp.QuantityMeasurementBusiness.Exceptions;
 using QuantityMeasurementApp.QuantityMeasurementModel;
+using QuantityMeasurementApp.QuantityMeasurementRepo.Models;
 
 namespace QuantityMeasurementApp.QuantityMeasurementController
 {
@@ -77,6 +78,15 @@ namespace QuantityMeasurementApp.QuantityMeasurementController
         public QuantityDTO Divide(QuantityDTO dto1, QuantityDTO dto2)
         {
             return _service.Divide(dto1, dto2);
+        }
+
+        /// <summary>
+        /// Returns all persisted operation history records.
+        /// </summary>
+        /// <returns>List of history entities</returns>
+        public List<QuantityMeasurementEntity> GetOperationHistory()
+        {
+            return _service.GetOperationHistory();
         }
     }
 }

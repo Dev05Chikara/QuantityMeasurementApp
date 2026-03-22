@@ -16,7 +16,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementModel
         /// <summary>
         /// The measurement unit.
         /// </summary>
-        public object Unit { get; set; }
+        public object Unit { get; set; } = null!;
 
         /// <summary>
         /// Initializes a new instance of QuantityModel.
