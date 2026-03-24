@@ -1,23 +1,19 @@
 [
   {
     "Operand1": {
-      "Value": 25,
+      "Value": 12,
       "UnitName": "FEET",
       "MeasurementType": "Length"
     },
-    "Operand2": {
-      "Value": 125,
-      "UnitName": "INCHES",
-      "MeasurementType": "Length"
-    },
-    "Operation": "ADD",
+    "Operand2": null,
+    "Operation": "CONVERT",
     "Result": {
-      "Value": 35.42,
-      "UnitName": "FEET",
+      "Value": 144,
+      "UnitName": "INCHES",
       "MeasurementType": "Length"
     },
     "ErrorMessage": null,
     "HasError": false,
-    "Timestamp": "2026-03-22T03:01:18.3974634+05:30"
+    "Timestamp": "2026-03-24T17:16:22.7832822+05:30"
   }
 ]
