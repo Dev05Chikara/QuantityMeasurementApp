@@ -212,14 +212,14 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                 const int colResult = 22;
                 const int colError = 30;
 
-                string header =
+                string header = " | "+
                     PadCell("Timestamp", colTimestamp) + " | " +
                     PadCell("Type", colType) + " | " +
                     PadCell("Operation", colOperation) + " | " +
                     PadCell("Operand1", colOperand1) + " | " +
                     PadCell("Operand2", colOperand2) + " | " +
                     PadCell("Result", colResult) + " | " +
-                    PadCell("ErrorMessage", colError);
+                    PadCell("ErrorMessage", colError) + " | ";
 
                 string separator = new string('-', header.Length);
 
@@ -233,14 +233,14 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                         ? item.Operand1.MeasurementType
                         : item.Result?.MeasurementType ?? "Unknown";
 
-                    string row =
+                    string row = " | "+
                         PadCell(item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"), colTimestamp) + " | " +
                         PadCell(measurementType, colType) + " | " +
                         PadCell(item.Operation, colOperation) + " | " +
                         PadCell(FormatQuantity(item.Operand1), colOperand1) + " | " +
                         PadCell(FormatQuantity(item.Operand2), colOperand2) + " | " +
                         PadCell(FormatQuantity(item.Result), colResult) + " | " +
-                        PadCell(item.ErrorMessage ?? "-", colError);
+                        PadCell(item.ErrorMessage ?? "-", colError) + " | ";
 
                     Console.WriteLine(row);
                 }

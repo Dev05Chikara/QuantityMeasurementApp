@@ -13,7 +13,7 @@ namespace QuantityMeasurementApp
     {
         private static void Main(string[] args)
         {
-            string connectionString ="Server=localhost\\SQLEXPRESS;Database=QuantityMeasurementDB;Integrated Security=True;TrustServerCertificate=True;";
+            string connectionString ="Server=localhost\\SQLEXPRESS;Database=QuantityMeasurementDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
             var repository = new QuantityMeasurementSqlRepository(connectionString);
             var service = new QuantityMeasurementServiceImpl(repository);
