@@ -52,13 +52,13 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
                     MeasurementType = "Comparison"
                 };
 
-                SaveOperation(dto1, dto2, "COMPARE", resultDto);
+                SaveOperation(dto1, dto2, OperationType.COMPARE, resultDto);
 
                 return resultDto;
             }
             catch (Exception ex)
             {
-                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, "COMPARE", ex.Message);
+                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.COMPARE, ex.Message);
                 _repository.Save(errorEntity);
                 throw new QuantityMeasurementException("Comparison failed: " + ex.Message, ex);
             }
@@ -109,13 +109,13 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
                     MeasurementType = dto.MeasurementType
                 };
 
-                SaveOperation(dto, "CONVERT", resultDto);
+                SaveOperation(dto, OperationType.CONVERT, resultDto);
 
                 return resultDto;
             }
             catch (Exception ex)
             {
-                var errorEntity = new QuantityMeasurementEntity(dto, "CONVERT", ex.Message);
+                var errorEntity = new QuantityMeasurementEntity(dto, OperationType.CONVERT, ex.Message);
                 _repository.Save(errorEntity);
                 throw new QuantityMeasurementException("Conversion failed: " + ex.Message, ex);
             }
@@ -148,13 +148,13 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
                     MeasurementType = dto1.MeasurementType
                 };
 
-                SaveOperation(dto1, dto2, "ADD", resultDto);
+                SaveOperation(dto1, dto2, OperationType.ADD, resultDto);
 
                 return resultDto;
             }
             catch (Exception ex)
             {
-                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, "ADD", ex.Message);
+                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.ADD, ex.Message);
                 _repository.Save(errorEntity);
                 throw new QuantityMeasurementException("Addition failed: " + ex.Message, ex);
             }
@@ -187,13 +187,13 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
                     MeasurementType = dto1.MeasurementType
                 };
 
-                SaveOperation(dto1, dto2, "SUBTRACT", resultDto);
+                SaveOperation(dto1, dto2, OperationType.SUBTRACT, resultDto);
 
                 return resultDto;
             }
             catch (Exception ex)
             {
-                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, "SUBTRACT", ex.Message);
+                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.SUBTRACT, ex.Message);
                 _repository.Save(errorEntity);
                 throw new QuantityMeasurementException("Subtraction failed: " + ex.Message, ex);
             }
@@ -226,13 +226,13 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
                     MeasurementType = "Scalar"
                 };
 
-                SaveOperation(dto1, dto2, "DIVIDE", resultDto);
+                SaveOperation(dto1, dto2, OperationType.DIVIDE, resultDto);
 
                 return resultDto;
             }
             catch (Exception ex)
             {
-                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, "DIVIDE", ex.Message);
+                var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.DIVIDE, ex.Message);
                 _repository.Save(errorEntity);
                 throw new QuantityMeasurementException("Division failed: " + ex.Message, ex);
             }
@@ -241,10 +241,11 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         /// <summary>
         /// Returns all persisted operation history records.
         /// </summary>
+        /// <param name="operationType">Optional operation type filter</param>
         /// <returns>List of history entities</returns>
-        public List<QuantityMeasurementEntity> GetOperationHistory()
+        public List<QuantityMeasurementEntity> GetOperationHistory(OperationType? operationType = null)
         {
-            return _repository.GetAllMeasurements();
+            return _repository.GetAllMeasurements(operationType);
         }
 
         /// <summary>
@@ -327,7 +328,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         /// <param name="dto2">Second DTO</param>
         /// <param name="operation">Operation name</param>
         /// <param name="result">Result DTO</param>
-        private void SaveOperation(QuantityDTO dto1, QuantityDTO dto2, string operation, QuantityDTO result)
+        private void SaveOperation(QuantityDTO dto1, QuantityDTO dto2, OperationType operation, QuantityDTO result)
         {
             var entity = new QuantityMeasurementEntity(dto1, dto2, operation, result);
             _repository.Save(entity);
@@ -339,7 +340,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Services
         /// <param name="dto">DTO</param>
         /// <param name="operation">Operation name</param>
         /// <param name="result">Result DTO</param>
-        private void SaveOperation(QuantityDTO dto, string operation, QuantityDTO result)
+        private void SaveOperation(QuantityDTO dto, OperationType operation, QuantityDTO result)
         {
             var entity = new QuantityMeasurementEntity(dto, operation, result);
             _repository.Save(entity);

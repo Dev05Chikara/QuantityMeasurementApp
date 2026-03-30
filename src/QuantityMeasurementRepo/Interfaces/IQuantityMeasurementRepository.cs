@@ -19,7 +19,8 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo.Interfaces
         /// <summary>
         /// Retrieves all measurement entities from the repository.
         /// </summary>
+        /// <param name="operationType">Optional operation type filter</param>
         /// <returns>List of all entities</returns>
-        List<QuantityMeasurementEntity> GetAllMeasurements();
+        List<QuantityMeasurementEntity> GetAllMeasurements(OperationType? operationType = null);
     }
 }

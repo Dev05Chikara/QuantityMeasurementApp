@@ -1,26 +1,34 @@
+using Microsoft.EntityFrameworkCore;
+using QuantityMeasurementApp.Middleware;
+using QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces;
 using QuantityMeasurementApp.QuantityMeasurementBusiness.Services;
+using QuantityMeasurementApp.QuantityMeasurementRepo;
 using QuantityMeasurementApp.QuantityMeasurementRepo.Implementations;
-using QuantityMeasurementApp.QuantityMeasurementUI;
-using QuantityMeasurementApp.interfaces;
-using ControllerType = QuantityMeasurementApp.QuantityMeasurementController.QuantityMeasurementController;
+using QuantityMeasurementApp.QuantityMeasurementRepo.Interfaces;
 
-namespace QuantityMeasurementApp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<QuantityMeasurementDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("QuantityMeasurementDb")));
+
+builder.Services.AddScoped<IQuantityMeasurementRepository, QuantityMeasurementEfRepository>();
+builder.Services.AddScoped<IQuantityMeasurementService, QuantityMeasurementServiceImpl>();
+
+var app = builder.Build();
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
+if (app.Environment.IsDevelopment())
 {
-    /// <summary>
-    /// Entry point. Wires dependencies and starts the console menu.
-    /// </summary>
-    internal class Program
-    {
-        private static void Main(string[] args)
-        {
-            string connectionString ="Server=localhost\\SQLEXPRESS;Database=QuantityMeasurementDB;Trusted_Connection=True;TrustServerCertificate=True;";
-
-            var repository = new QuantityMeasurementSqlRepository(connectionString);
-            var service = new QuantityMeasurementServiceImpl(repository);
-            var controller = new ControllerType(service);
-            IApplicationUI applicationUI = new Menu(controller);
-
-            applicationUI.Run();
-        }
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+app.MapControllers();
+
+app.Run();

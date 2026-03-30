@@ -83,10 +83,11 @@ namespace QuantityMeasurementApp.QuantityMeasurementController
         /// <summary>
         /// Returns all persisted operation history records.
         /// </summary>
+        /// <param name="operationType">Optional operation filter</param>
         /// <returns>List of history entities</returns>
-        public List<QuantityMeasurementEntity> GetOperationHistory()
+        public List<QuantityMeasurementEntity> GetOperationHistory(OperationType? operationType = null)
         {
-            return _service.GetOperationHistory();
+            return _service.GetOperationHistory(operationType);
         }
     }
 }

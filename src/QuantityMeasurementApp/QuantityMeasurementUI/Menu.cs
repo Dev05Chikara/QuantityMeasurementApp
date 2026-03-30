@@ -236,7 +236,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementUI
                     string row = " | "+
                         PadCell(item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"), colTimestamp) + " | " +
                         PadCell(measurementType, colType) + " | " +
-                        PadCell(item.Operation, colOperation) + " | " +
+                        PadCell(item.Operation.ToString(), colOperation) + " | " +
                         PadCell(FormatQuantity(item.Operand1), colOperand1) + " | " +
                         PadCell(FormatQuantity(item.Operand2), colOperand2) + " | " +
                         PadCell(FormatQuantity(item.Result), colResult) + " | " +

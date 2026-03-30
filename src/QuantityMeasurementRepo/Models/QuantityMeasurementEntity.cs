@@ -24,7 +24,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo.Models
         /// <summary>
         /// The operation type (e.g., "COMPARE", "CONVERT", "ADD").
         /// </summary>
-        public string Operation { get; private set; }
+        public OperationType Operation { get; private set; }
 
         /// <summary>
         /// The result of the operation.
@@ -48,7 +48,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo.Models
         /// <param name="operation">The operation type</param>
         /// <param name="result">The result</param>
         /// <param name="timestamp">Optional timestamp for persisted history records</param>
-        public QuantityMeasurementEntity(QuantityDTO operand1, string operation, QuantityDTO? result, DateTime? timestamp = null)
+        public QuantityMeasurementEntity(QuantityDTO operand1, OperationType operation, QuantityDTO? result, DateTime? timestamp = null)
         {
             Operand1 = operand1;
             Operand2 = null;
@@ -66,7 +66,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo.Models
         /// <param name="operation">The operation type</param>
         /// <param name="result">The result</param>
         /// <param name="timestamp">Optional timestamp for persisted history records</param>
-        public QuantityMeasurementEntity(QuantityDTO operand1, QuantityDTO? operand2, string operation, QuantityDTO? result, DateTime? timestamp = null)
+        public QuantityMeasurementEntity(QuantityDTO operand1, QuantityDTO? operand2, OperationType operation, QuantityDTO? result, DateTime? timestamp = null)
         {
             Operand1 = operand1;
             Operand2 = operand2;
@@ -84,7 +84,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo.Models
         /// <param name="operation">The operation type</param>
         /// <param name="errorMessage">The error message</param>
         /// <param name="timestamp">Optional timestamp for persisted history records</param>
-        public QuantityMeasurementEntity(QuantityDTO operand1, QuantityDTO? operand2, string operation, string? errorMessage, DateTime? timestamp = null)
+        public QuantityMeasurementEntity(QuantityDTO operand1, QuantityDTO? operand2, OperationType operation, string? errorMessage, DateTime? timestamp = null)
         {
             Operand1 = operand1;
             Operand2 = operand2;
@@ -101,7 +101,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo.Models
         /// <param name="operation">The operation type</param>
         /// <param name="errorMessage">The error message</param>
         /// <param name="timestamp">Optional timestamp for persisted history records</param>
-        public QuantityMeasurementEntity(QuantityDTO operand1, string operation, string? errorMessage, DateTime? timestamp = null)
+        public QuantityMeasurementEntity(QuantityDTO operand1, OperationType operation, string? errorMessage, DateTime? timestamp = null)
         {
             Operand1 = operand1;
             Operand2 = null;

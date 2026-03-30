@@ -52,7 +52,8 @@ namespace QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces
         /// <summary>
         /// Returns all persisted operation history records.
         /// </summary>
+        /// <param name="operationType">Optional operation type filter</param>
         /// <returns>List of history entities</returns>
-        List<QuantityMeasurementEntity> GetOperationHistory();
+        List<QuantityMeasurementEntity> GetOperationHistory(OperationType? operationType = null);
     }
 }

@@ -42,7 +42,7 @@ VALUES
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(sql, connection);
 
-            command.Parameters.AddWithValue("@Operation", entity.Operation);
+            command.Parameters.AddWithValue("@Operation", entity.Operation.ToString());
 
             command.Parameters.AddWithValue("@Operand1Value", entity.Operand1.Value);
             command.Parameters.AddWithValue("@Operand1UnitName", entity.Operand1.UnitName);
@@ -63,7 +63,7 @@ VALUES
             command.ExecuteNonQuery();
         }
 
-        public List<QuantityMeasurementEntity> GetAllMeasurements()
+        public List<QuantityMeasurementEntity> GetAllMeasurements(OperationType? operationType = null)
         {
             const string sql = @"
 SELECT
@@ -73,18 +73,24 @@ SELECT
     ResultValue, ResultUnitName, ResultMeasurementType,
     ErrorMessage, CreatedAtUtc
 FROM dbo.QuantityMeasurementHistory
+WHERE (@Operation IS NULL OR Operation = @Operation)
 ORDER BY Id DESC;";
 
             var measurements = new List<QuantityMeasurementEntity>();
 
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@Operation", operationType?.ToString() ?? (object)DBNull.Value);
             connection.Open();
 
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                var operation = reader.GetString(reader.GetOrdinal("Operation"));
+                var operationName = reader.GetString(reader.GetOrdinal("Operation"));
+                if (!Enum.TryParse(operationName, true, out OperationType operation))
+                {
+                    continue;
+                }
                 var timestampUtc = reader.GetDateTime(reader.GetOrdinal("CreatedAtUtc"));
                 var errorMessage = GetNullableString(reader, "ErrorMessage");
 
