@@ -14,6 +14,7 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo
         }
 
         public DbSet<QuantityMeasurementHistoryRecord> QuantityMeasurementHistory => Set<QuantityMeasurementHistoryRecord>();
+        public DbSet<UserCredentialRecord> UserCredentials => Set<UserCredentialRecord>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +44,19 @@ namespace QuantityMeasurementApp.QuantityMeasurementRepo
 
             entity.Property(e => e.ErrorMessage).HasColumnName("ErrorMessage").HasMaxLength(1000);
             entity.Property(e => e.CreatedAtUtc).HasColumnName("CreatedAtUtc").IsRequired();
+
+            var userEntity = modelBuilder.Entity<UserCredentialRecord>();
+
+            userEntity.ToTable("UserCredentials", "dbo");
+            userEntity.HasKey(e => e.Id);
+            userEntity.HasIndex(e => e.Username).IsUnique();
+
+            userEntity.Property(e => e.Id).HasColumnName("Id");
+            userEntity.Property(e => e.Username).HasColumnName("Username").HasMaxLength(100).IsRequired();
+            userEntity.Property(e => e.PasswordHash).HasColumnName("PasswordHash").HasMaxLength(256).IsRequired();
+            userEntity.Property(e => e.Role).HasColumnName("Role").HasMaxLength(50).IsRequired();
+            userEntity.Property(e => e.IsActive).HasColumnName("IsActive").IsRequired();
+            userEntity.Property(e => e.CreatedAtUtc).HasColumnName("CreatedAtUtc").IsRequired();
         }
     }
 }

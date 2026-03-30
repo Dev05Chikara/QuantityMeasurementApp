@@ -28,4 +28,19 @@ CREATE TABLE dbo.QuantityMeasurementHistory
 );
 GO
 
+--User login table for JWT authentication
+CREATE TABLE dbo.UserCredentials
+(
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(100) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(256) NOT NULL,
+    Role NVARCHAR(50) NOT NULL,
+    IsActive BIT NOT NULL
+        CONSTRAINT DF_UserCredentials_IsActive DEFAULT 1,
+    CreatedAtUtc DATETIME2 NOT NULL
+        CONSTRAINT DF_UserCredentials_CreatedAtUtc DEFAULT SYSUTCDATETIME()
+);
+GO
+
 SELECT * FROM dbo.QuantityMeasurementHistory;
+SELECT * FROM dbo.UserCredentials;
