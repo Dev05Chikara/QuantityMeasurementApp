@@ -1,10 +1,10 @@
 using System;
-using QuantityMeasurementApp.QuantityMeasurementBusiness.Interfaces;
-using QuantityMeasurementApp.QuantityMeasurementBusiness.Exceptions;
-using QuantityMeasurementApp.QuantityMeasurementModel;
-using QuantityMeasurementApp.QuantityMeasurementRepo.Models;
+using QuantityMeasurementApp.Business.Interfaces;
+using QuantityMeasurementApp.Business.Exceptions;
+using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.Repository.Models;
 
-namespace QuantityMeasurementApp.QuantityMeasurementController
+namespace QuantityMeasurementApp.Controller
 {
     /// <summary>
     /// QuantityMeasurementController serves as the entry point for the QuantityMeasurementApp.
@@ -91,3 +91,5 @@ namespace QuantityMeasurementApp.QuantityMeasurementController
         }
     }
 }
+
+
