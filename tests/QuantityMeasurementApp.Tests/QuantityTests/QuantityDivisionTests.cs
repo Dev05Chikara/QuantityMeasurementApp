@@ -1,6 +1,6 @@
 using NUnit.Framework;
-using QuantityMeasurementApp.QuantityMeasurementBusiness.Quantities;
-using QuantityMeasurementApp.QuantityMeasurementBusiness.Units;
+using QuantityMeasurementApp.Business.Quantities;
+using QuantityMeasurementApp.Business.Units;
 
 namespace QuantityMeasurementApp.Tests.QuantityTests
 {
@@ -362,3 +362,4 @@ namespace QuantityMeasurementApp.Tests.QuantityTests
         }
     }
 }
+
