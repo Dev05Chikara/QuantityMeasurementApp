@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,7 +26,12 @@ if (mode != "api")
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Keep PascalCase names
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -53,6 +59,18 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+
+// Add CORS to allow frontend requests
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", corsPolicyBuilder =>
+    {
+        corsPolicyBuilder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -112,6 +130,36 @@ BEGIN
     );
 END");
 
+    // Create or update QuantityMeasurementHistory table
+    dbContext.Database.ExecuteSqlRaw(@"
+IF OBJECT_ID('dbo.QuantityMeasurementHistory', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.QuantityMeasurementHistory
+    (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Username NVARCHAR(100) NOT NULL DEFAULT 'Anonymous',
+        Operation NVARCHAR(50) NOT NULL,
+        Operand1Value FLOAT NOT NULL,
+        Operand1UnitName NVARCHAR(50) NOT NULL,
+        Operand1MeasurementType NVARCHAR(50) NOT NULL,
+        Operand2Value FLOAT,
+        Operand2UnitName NVARCHAR(50),
+        Operand2MeasurementType NVARCHAR(50),
+        ResultValue FLOAT,
+        ResultUnitName NVARCHAR(50),
+        ResultMeasurementType NVARCHAR(50),
+        ErrorMessage NVARCHAR(MAX),
+        CreatedAtUtc DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+    );
+END");
+
+    // Add Username column if it doesn't exist (for existing databases)
+    dbContext.Database.ExecuteSqlRaw(@"
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'QuantityMeasurementHistory' AND COLUMN_NAME = 'Username')
+BEGIN
+    ALTER TABLE dbo.QuantityMeasurementHistory ADD Username NVARCHAR(100) NOT NULL DEFAULT 'Anonymous';
+END");
+
     var seedUsername = configuration["SeedUser:Username"];
     var seedPassword = configuration["SeedUser:Password"];
     var seedRole = configuration["SeedUser:Role"] ?? "User";
@@ -133,11 +181,31 @@ END");
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
+// Request/Response logging middleware
+app.Use(async (context, next) =>
+{
+    var request = context.Request;
+    Console.WriteLine($"\n[RequestLogger] ----");
+    Console.WriteLine($"[RequestLogger] Method: {request.Method} Path: {request.Path}");
+    Console.WriteLine($"[RequestLogger] Has Authorization: {request.Headers.ContainsKey("Authorization")}");
+    if (request.Headers.ContainsKey("Authorization"))
+    {
+        var authHeader = request.Headers["Authorization"].ToString();
+        Console.WriteLine($"[RequestLogger] Auth length: {authHeader.Length}, starts with: {authHeader.Substring(0, Math.Min(30, authHeader.Length))}...");
+    }
+    
+    await next();
+    
+    Console.WriteLine($"[RequestLogger] Response Status: {context.Response.StatusCode}");
+    Console.WriteLine($"[RequestLogger] ----\n");
+});
+
 // Enable Swagger for all environments (useful for development and testing)
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
