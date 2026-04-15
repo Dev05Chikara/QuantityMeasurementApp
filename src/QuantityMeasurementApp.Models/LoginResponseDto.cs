@@ -10,6 +10,9 @@ namespace QuantityMeasurementApp.Models
         [JsonPropertyName("Token")]
         public string Token { get; set; } = string.Empty;
 
+        [JsonPropertyName("Username")]
+        public string Username { get; set; } = string.Empty;
+
         [JsonPropertyName("ExpiresAtUtc")]
         public DateTime ExpiresAtUtc { get; set; }
     }

@@ -37,6 +37,7 @@ builder.Services.AddEndpointsApiExplorer();
 var jwtSection = builder.Configuration.GetSection("Jwt");
 builder.Services.Configure<JwtOptions>(jwtSection);
 var jwtOptions = jwtSection.Get<JwtOptions>() ?? new JwtOptions();
+builder.Services.Configure<GoogleAuthOptions>(builder.Configuration.GetSection("GoogleAuth"));
 
 builder.Services.AddAuthentication(options =>
 {
