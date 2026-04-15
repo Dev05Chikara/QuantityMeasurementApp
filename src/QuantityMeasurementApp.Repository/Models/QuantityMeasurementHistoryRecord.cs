@@ -9,6 +9,8 @@ namespace QuantityMeasurementApp.Repository.Models
     {
         public int Id { get; set; }
 
+        public string Username { get; set; } = string.Empty;
+
         public OperationType Operation { get; set; }
 
         public double Operand1Value { get; set; }

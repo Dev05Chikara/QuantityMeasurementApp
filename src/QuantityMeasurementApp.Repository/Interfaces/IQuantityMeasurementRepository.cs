@@ -11,17 +11,28 @@ namespace QuantityMeasurementApp.Repository.Interfaces
     public interface IQuantityMeasurementRepository
     {
         /// <summary>
-        /// Saves a QuantityMeasurementEntity to the repository.
+        /// Saves a QuantityMeasurementEntity to the repository for a specific user.
         /// </summary>
         /// <param name="entity">The entity to save</param>
-        void Save(QuantityMeasurementEntity entity);
+        /// <param name="username">The username of the user performing the operation</param>
+        void Save(QuantityMeasurementEntity entity, string username);
 
         /// <summary>
-        /// Retrieves all measurement entities from the repository.
+        /// Retrieves all measurement entities for a specific user from the repository.
         /// </summary>
+        /// <param name="username">The username to filter by</param>
         /// <param name="operationType">Optional operation type filter</param>
-        /// <returns>List of all entities</returns>
-        List<QuantityMeasurementEntity> GetAllMeasurements(OperationType? operationType = null);
+        /// <returns>List of user's entities</returns>
+        List<QuantityMeasurementEntity> GetAllMeasurements(string username, OperationType? operationType = null);
+
+        /// <summary>
+        /// Retrieves all measurement history records for a specific user (raw from database).
+        /// Returns flattened records without entity conversion to avoid data loss.
+        /// </summary>
+        /// <param name="username">The username to filter by</param>
+        /// <param name="operationType">Optional operation type filter</param>
+        /// <returns>List of flattened database records</returns>
+        List<QuantityMeasurementHistoryRecord> GetAllMeasurementsFlattened(string username, OperationType? operationType = null);
     }
 }
 

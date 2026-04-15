@@ -15,6 +15,7 @@ namespace QuantityMeasurementApp.Business.Services
     public class QuantityMeasurementServiceImpl : IQuantityMeasurementService
     {
         private readonly IQuantityMeasurementRepository _repository;
+        private string _currentUsername = "Anonymous";
 
         /// <summary>
         /// Initializes a new instance of QuantityMeasurementServiceImpl.
@@ -23,6 +24,14 @@ namespace QuantityMeasurementApp.Business.Services
         public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository)
         {
             _repository = repository;
+        }
+
+        /// <summary>
+        /// Sets the current username for history tracking.
+        /// </summary>
+        public void SetCurrentUsername(string username)
+        {
+            _currentUsername = username ?? "Anonymous";
         }
 
         /// <summary>
@@ -59,7 +68,7 @@ namespace QuantityMeasurementApp.Business.Services
             catch (Exception ex)
             {
                 var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.COMPARE, ex.Message);
-                _repository.Save(errorEntity);
+                _repository.Save(errorEntity, _currentUsername);
                 throw new QuantityMeasurementException("Comparison failed: " + ex.Message, ex);
             }
         }
@@ -74,11 +83,17 @@ namespace QuantityMeasurementApp.Business.Services
         {
             try
             {
+                Console.WriteLine($"[Convert] ==== REQUEST ====");
+                Console.WriteLine($"[Convert] Input: {dto.Value} {dto.UnitName} ({dto.MeasurementType})");
+                Console.WriteLine($"[Convert] Target Unit: {targetUnitName}");
+                
                 ValidateInput(dto);
 
                 var model = ConvertToModel(dto);
                 var quantity = CreateQuantity(model);
                 var targetUnit = GetUnitFromName(dto.MeasurementType, targetUnitName);
+                
+                Console.WriteLine($"[Convert] Target unit enum parsed successfully: {targetUnit}");
 
                 dynamic converted;
                 if (dto.MeasurementType == "Length")
@@ -108,6 +123,9 @@ namespace QuantityMeasurementApp.Business.Services
                     UnitName = targetUnitName,
                     MeasurementType = dto.MeasurementType
                 };
+                
+                Console.WriteLine($"[Convert] Result: {resultDto.Value} {resultDto.UnitName}");
+                Console.WriteLine($"[Convert] ==== RETURNING OK ====\n");
 
                 SaveOperation(dto, OperationType.CONVERT, resultDto);
 
@@ -115,8 +133,10 @@ namespace QuantityMeasurementApp.Business.Services
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[Convert] ERROR: {ex.Message}");
+                Console.WriteLine($"[Convert] Stack: {ex.StackTrace}");
                 var errorEntity = new QuantityMeasurementEntity(dto, OperationType.CONVERT, ex.Message);
-                _repository.Save(errorEntity);
+                _repository.Save(errorEntity, _currentUsername);
                 throw new QuantityMeasurementException("Conversion failed: " + ex.Message, ex);
             }
         }
@@ -155,7 +175,7 @@ namespace QuantityMeasurementApp.Business.Services
             catch (Exception ex)
             {
                 var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.ADD, ex.Message);
-                _repository.Save(errorEntity);
+                _repository.Save(errorEntity, _currentUsername);
                 throw new QuantityMeasurementException("Addition failed: " + ex.Message, ex);
             }
         }
@@ -194,7 +214,7 @@ namespace QuantityMeasurementApp.Business.Services
             catch (Exception ex)
             {
                 var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.SUBTRACT, ex.Message);
-                _repository.Save(errorEntity);
+                _repository.Save(errorEntity, _currentUsername);
                 throw new QuantityMeasurementException("Subtraction failed: " + ex.Message, ex);
             }
         }
@@ -233,7 +253,7 @@ namespace QuantityMeasurementApp.Business.Services
             catch (Exception ex)
             {
                 var errorEntity = new QuantityMeasurementEntity(dto1, dto2, OperationType.DIVIDE, ex.Message);
-                _repository.Save(errorEntity);
+                _repository.Save(errorEntity, _currentUsername);
                 throw new QuantityMeasurementException("Division failed: " + ex.Message, ex);
             }
         }
@@ -245,7 +265,7 @@ namespace QuantityMeasurementApp.Business.Services
         /// <returns>List of history entities</returns>
         public List<QuantityMeasurementEntity> GetOperationHistory(OperationType? operationType = null)
         {
-            return _repository.GetAllMeasurements(operationType);
+            return _repository.GetAllMeasurements(_currentUsername, operationType);
         }
 
         /// <summary>
@@ -331,7 +351,7 @@ namespace QuantityMeasurementApp.Business.Services
         private void SaveOperation(QuantityDTO dto1, QuantityDTO dto2, OperationType operation, QuantityDTO result)
         {
             var entity = new QuantityMeasurementEntity(dto1, dto2, operation, result);
-            _repository.Save(entity);
+            _repository.Save(entity, _currentUsername);
         }
 
         /// <summary>
@@ -343,7 +363,19 @@ namespace QuantityMeasurementApp.Business.Services
         private void SaveOperation(QuantityDTO dto, OperationType operation, QuantityDTO result)
         {
             var entity = new QuantityMeasurementEntity(dto, operation, result);
-            _repository.Save(entity);
+            _repository.Save(entity, _currentUsername);
+        }
+
+        /// <summary>
+        /// Returns all persisted operation history records in flattened format.
+        /// This is used for API responses where the frontend expects flat property names.
+        /// Gets records directly from database without entity conversion to avoid data loss.
+        /// </summary>
+        /// <param name="operationType">Optional operation type filter</param>
+        /// <returns>List of flattened history records</returns>
+        public List<QuantityMeasurementHistoryRecord> GetOperationHistoryFlattened(OperationType? operationType = null)
+        {
+            return _repository.GetAllMeasurementsFlattened(_currentUsername, operationType);
         }
     }
 }

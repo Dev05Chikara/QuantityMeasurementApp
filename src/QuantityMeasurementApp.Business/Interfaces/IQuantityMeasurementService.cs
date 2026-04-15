@@ -10,6 +10,12 @@ namespace QuantityMeasurementApp.Business.Interfaces
     public interface IQuantityMeasurementService
     {
         /// <summary>
+        /// Sets the current username for history tracking.
+        /// </summary>
+        /// <param name="username">The username to set</param>
+        void SetCurrentUsername(string username);
+
+        /// <summary>
         /// Compares two quantities.
         /// </summary>
         /// <param name="dto1">First quantity DTO</param>
@@ -55,6 +61,13 @@ namespace QuantityMeasurementApp.Business.Interfaces
         /// <param name="operationType">Optional operation type filter</param>
         /// <returns>List of history entities</returns>
         List<QuantityMeasurementEntity> GetOperationHistory(OperationType? operationType = null);
+
+        /// <summary>
+        /// Returns all persisted operation history records in flattened format for API responses.
+        /// </summary>
+        /// <param name="operationType">Optional operation type filter</param>
+        /// <returns>List of flattened history records</returns>
+        List<QuantityMeasurementHistoryRecord> GetOperationHistoryFlattened(OperationType? operationType = null);
     }
 }
 

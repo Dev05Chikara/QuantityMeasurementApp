@@ -19,11 +19,12 @@ namespace QuantityMeasurementApp.Repository.Implementations
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        public void Save(QuantityMeasurementEntity entity)
+        public void Save(QuantityMeasurementEntity entity, string username)
         {
             const string sql = @"
 INSERT INTO dbo.QuantityMeasurementHistory
 (
+    Username,
     Operation,
     Operand1Value, Operand1UnitName, Operand1MeasurementType,
     Operand2Value, Operand2UnitName, Operand2MeasurementType,
@@ -32,6 +33,7 @@ INSERT INTO dbo.QuantityMeasurementHistory
 )
 VALUES
 (
+    @Username,
     @Operation,
     @Operand1Value, @Operand1UnitName, @Operand1MeasurementType,
     @Operand2Value, @Operand2UnitName, @Operand2MeasurementType,
@@ -42,6 +44,7 @@ VALUES
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(sql, connection);
 
+            command.Parameters.AddWithValue("@Username", username ?? "Anonymous");
             command.Parameters.AddWithValue("@Operation", entity.Operation.ToString());
 
             command.Parameters.AddWithValue("@Operand1Value", entity.Operand1.Value);
@@ -63,7 +66,7 @@ VALUES
             command.ExecuteNonQuery();
         }
 
-        public List<QuantityMeasurementEntity> GetAllMeasurements(OperationType? operationType = null)
+        public List<QuantityMeasurementEntity> GetAllMeasurements(string username, OperationType? operationType = null)
         {
             const string sql = @"
 SELECT
@@ -73,13 +76,14 @@ SELECT
     ResultValue, ResultUnitName, ResultMeasurementType,
     ErrorMessage, CreatedAtUtc
 FROM dbo.QuantityMeasurementHistory
-WHERE (@Operation IS NULL OR Operation = @Operation)
+WHERE Username = @Username AND (@Operation IS NULL OR Operation = @Operation)
 ORDER BY Id DESC;";
 
             var measurements = new List<QuantityMeasurementEntity>();
 
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@Username", username ?? "Anonymous");
             command.Parameters.AddWithValue("@Operation", operationType?.ToString() ?? (object)DBNull.Value);
             connection.Open();
 
@@ -148,6 +152,62 @@ ORDER BY Id DESC;";
             return measurements;
         }
 
+        public List<QuantityMeasurementHistoryRecord> GetAllMeasurementsFlattened(string username, OperationType? operationType = null)
+        {
+            const string sql = @"
+SELECT
+    Id,
+    Operation,
+    Operand1Value, Operand1UnitName, Operand1MeasurementType,
+    Operand2Value, Operand2UnitName, Operand2MeasurementType,
+    ResultValue, ResultUnitName, ResultMeasurementType,
+    ErrorMessage, CreatedAtUtc
+FROM dbo.QuantityMeasurementHistory
+WHERE Username = @Username AND (@Operation IS NULL OR Operation = @Operation)
+ORDER BY Id DESC;";
+
+            var records = new List<QuantityMeasurementHistoryRecord>();
+
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@Username", username ?? "Anonymous");
+            command.Parameters.AddWithValue("@Operation", operationType?.ToString() ?? (object)DBNull.Value);
+            connection.Open();
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var operationName = reader.GetString(reader.GetOrdinal("Operation"));
+                if (!Enum.TryParse<OperationType>(operationName, true, out var operation))
+                {
+                    operation = OperationType.CONVERT; // Default to CONVERT if parsing fails
+                }
+
+                var operand1Value = reader.GetDouble(reader.GetOrdinal("Operand1Value"));
+
+                var record = new QuantityMeasurementHistoryRecord
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Operation = operation,
+                    Operand1Value = operand1Value,
+                    Operand1UnitName = reader.GetString(reader.GetOrdinal("Operand1UnitName")),
+                    Operand1MeasurementType = reader.GetString(reader.GetOrdinal("Operand1MeasurementType")),
+                    Operand2Value = GetNullableDouble(reader, "Operand2Value"),
+                    Operand2UnitName = GetNullableString(reader, "Operand2UnitName"),
+                    Operand2MeasurementType = GetNullableString(reader, "Operand2MeasurementType"),
+                    ResultValue = GetNullableDouble(reader, "ResultValue"),
+                    ResultUnitName = GetNullableString(reader, "ResultUnitName"),
+                    ResultMeasurementType = GetNullableString(reader, "ResultMeasurementType"),
+                    ErrorMessage = GetNullableString(reader, "ErrorMessage"),
+                    CreatedAtUtc = reader.GetDateTime(reader.GetOrdinal("CreatedAtUtc"))
+                };
+
+                records.Add(record);
+            }
+
+            return records;
+        }
+
         private static object GetDbValue(object? value)
         {
             return value ?? DBNull.Value;
@@ -157,6 +217,12 @@ ORDER BY Id DESC;";
         {
             var ordinal = reader.GetOrdinal(column);
             return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
+        }
+
+        private static double? GetNullableDouble(SqlDataReader reader, string column)
+        {
+            var ordinal = reader.GetOrdinal(column);
+            return reader.IsDBNull(ordinal) ? null : reader.GetDouble(ordinal);
         }
     }
 }
