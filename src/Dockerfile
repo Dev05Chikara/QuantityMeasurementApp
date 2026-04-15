@@ -1,7 +1,7 @@
 # Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
-WORKDIR /src
+WORKDIR /build
 
 # Copy solution and project files
 COPY ["QuantityMeasurementApp.sln", "."]
@@ -11,13 +11,11 @@ COPY ["src/QuantityMeasurementApp.Models/QuantityMeasurementApp.Models.csproj", 
 COPY ["src/QuantityMeasurementApp.Repository/QuantityMeasurementApp.Repository.csproj", "src/QuantityMeasurementApp.Repository/"]
 COPY ["src/QuantityMeasurementController/QuantityMeasurementApp.Controller.csproj", "src/QuantityMeasurementController/"]
 
-# Restore dependencies
-RUN dotnet restore "QuantityMeasurementApp.sln"
-
 # Copy entire source
 COPY . .
 
-# Build the API project
+# Restore and build only the API project
+RUN dotnet restore "src/QuantityMeasurementApp.Api/QuantityMeasurementApp.Api.csproj"
 RUN dotnet build "src/QuantityMeasurementApp.Api/QuantityMeasurementApp.Api.csproj" -c Release -o /app/build
 
 # Stage 2: Publish
