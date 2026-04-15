@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Google.Apis.Auth;
 using QuantityMeasurementApp.Repository;
 using QuantityMeasurementApp.Authentication;
 using QuantityMeasurementApp.Models;
@@ -29,7 +30,7 @@ namespace QuantityMeasurementApp.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterUserRequestDto request)
+        public ActionResult<LoginResponseDto> Register([FromBody] RegisterUserRequestDto request)
         {
             if (string.IsNullOrWhiteSpace(request.Username))
             {
@@ -59,7 +60,15 @@ namespace QuantityMeasurementApp.Controllers
                 CreatedAtUtc = DateTime.UtcNow
             });
 
-            return Ok(new { message = "User registered successfully" });
+            var token = _jwtTokenService.GenerateToken(request.Username, normalizedRole);
+            var expiry = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes);
+
+            return Ok(new LoginResponseDto
+            {
+                Token = token,
+                Username = request.Username,
+                ExpiresAtUtc = expiry
+            });
         }
 
         [AllowAnonymous]
@@ -77,6 +86,76 @@ namespace QuantityMeasurementApp.Controllers
             return Ok(new LoginResponseDto
             {
                 Token = token,
+                Username = request.Username,
+                ExpiresAtUtc = expiry
+            });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("google")]
+        public async Task<ActionResult<LoginResponseDto>> LoginWithGoogle([FromBody] GoogleAuthRequestDto request)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.IdToken))
+            {
+                return BadRequest(new { message = "Google idToken is required" });
+            }
+
+            var googleClientId = HttpContext.RequestServices
+                .GetRequiredService<IConfiguration>()
+                .GetSection("GoogleAuth")
+                .GetValue<string>("ClientId");
+
+            if (string.IsNullOrWhiteSpace(googleClientId))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Google auth is not configured on server" });
+            }
+
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { googleClientId }
+                });
+            }
+            catch
+            {
+                return Unauthorized(new { message = "Invalid Google token" });
+            }
+
+            if (string.IsNullOrWhiteSpace(payload.Email))
+            {
+                return Unauthorized(new { message = "Google account email not available" });
+            }
+
+            var username = payload.Email.Trim();
+            var user = _userCredentialRepository.GetByUsername(username);
+
+            if (user is null && !_userCredentialRepository.Exists(username))
+            {
+                user = new UserCredentialRecord
+                {
+                    Username = username,
+                    PasswordHash = QuantityMeasurementApp.Authentication.PasswordHasher.Hash(Guid.NewGuid().ToString("N")),
+                    Role = "User",
+                    IsActive = true,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+                _userCredentialRepository.Add(user);
+            }
+
+            if (user is null)
+            {
+                return Unauthorized(new { message = "User is inactive" });
+            }
+
+            var token = _jwtTokenService.GenerateToken(user.Username, user.Role);
+            var expiry = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes);
+
+            return Ok(new LoginResponseDto
+            {
+                Token = token,
+                Username = user.Username,
                 ExpiresAtUtc = expiry
             });
         }

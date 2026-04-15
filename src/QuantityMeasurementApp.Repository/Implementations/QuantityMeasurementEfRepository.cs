@@ -17,10 +17,11 @@ namespace QuantityMeasurementApp.Repository.Implementations
             _dbContext = dbContext;
         }
 
-        public void Save(QuantityMeasurementEntity entity)
+        public void Save(QuantityMeasurementEntity entity, string username)
         {
             var record = new QuantityMeasurementHistoryRecord
             {
+                Username = username,
                 Operation = entity.Operation,
                 Operand1Value = entity.Operand1.Value,
                 Operand1UnitName = entity.Operand1.UnitName,
@@ -39,11 +40,12 @@ namespace QuantityMeasurementApp.Repository.Implementations
             _dbContext.SaveChanges();
         }
 
-        public List<QuantityMeasurementEntity> GetAllMeasurements(OperationType? operationType = null)
+        public List<QuantityMeasurementEntity> GetAllMeasurements(string username, OperationType? operationType = null)
         {
             IQueryable<QuantityMeasurementHistoryRecord> query = _dbContext
                 .QuantityMeasurementHistory
-                .AsNoTracking();
+                .AsNoTracking()
+                .Where(row => row.Username == username);
 
             if (operationType.HasValue)
             {
@@ -100,6 +102,23 @@ namespace QuantityMeasurementApp.Repository.Implementations
             return operand2 == null
                 ? new QuantityMeasurementEntity(operand1, row.Operation, result, localTimestamp)
                 : new QuantityMeasurementEntity(operand1, operand2, row.Operation, result, localTimestamp);
+        }
+
+        public List<QuantityMeasurementHistoryRecord> GetAllMeasurementsFlattened(string username, OperationType? operationType = null)
+        {
+            IQueryable<QuantityMeasurementHistoryRecord> query = _dbContext
+                .QuantityMeasurementHistory
+                .AsNoTracking()
+                .Where(row => row.Username == username);
+
+            if (operationType.HasValue)
+            {
+                query = query.Where(row => row.Operation == operationType.Value);
+            }
+
+            return query
+                .OrderByDescending(row => row.Id)
+                .ToList();
         }
     }
 }
