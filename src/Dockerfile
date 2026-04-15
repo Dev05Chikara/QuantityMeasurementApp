@@ -10,7 +10,6 @@ COPY ["src/QuantityMeasurementApp.Business/QuantityMeasurementApp.Business.cspro
 COPY ["src/QuantityMeasurementApp.Models/QuantityMeasurementApp.Models.csproj", "src/QuantityMeasurementApp.Models/"]
 COPY ["src/QuantityMeasurementApp.Repository/QuantityMeasurementApp.Repository.csproj", "src/QuantityMeasurementApp.Repository/"]
 COPY ["src/QuantityMeasurementController/QuantityMeasurementApp.Controller.csproj", "src/QuantityMeasurementController/"]
-COPY ["QuantityMeasurementApp.Repository/QuantityMeasurementApp.Repository.csproj", "QuantityMeasurementApp.Repository/"]
 
 # Restore dependencies
 RUN dotnet restore "QuantityMeasurementApp.sln"
