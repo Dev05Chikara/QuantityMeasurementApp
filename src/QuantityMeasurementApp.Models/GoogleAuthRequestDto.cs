@@ -1,7 +1,0 @@
-namespace QuantityMeasurementApp.Models
-{
-    public class GoogleAuthRequestDto
-    {
-        public string IdToken { get; set; } = string.Empty;
-    }
-}
